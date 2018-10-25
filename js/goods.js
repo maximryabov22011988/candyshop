@@ -105,6 +105,11 @@ var generateString = function (array) {
   return array.join(', ');
 };
 
+/**
+ * Генерирует данные
+ * @param  {number} count - количество объектов в массиве
+ * @return {array}        - массив с объектами
+ */
 var generatesData = function (count) {
   var data = [];
 
