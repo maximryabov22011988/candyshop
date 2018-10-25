@@ -203,7 +203,7 @@ var renderBasketCard = function (good) {
   basketCardElement.querySelector('.card-order__title').textContent = good.name;
   basketCardElement.querySelector('.card-order__img').src = good.picture;
   basketCardElement.querySelector('.card-order__img').alt = good.name;
-  basketCardElement.querySelector('.card-order__price').textContent = `${good.price} ₽`;
+  basketCardElement.querySelector('.card-order__price').textContent = good.price + ' ₽';
 
   return basketCardElement;
 };
