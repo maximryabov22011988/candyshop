@@ -1,6 +1,6 @@
 'use strict';
 
-var NUMBER_OF_GOODS = 0;
+var NUMBER_OF_GOODS = 5;
 var NUMBER_OF_GOODS_IN_CART = 3;
 
 var NAMES = [
@@ -86,6 +86,7 @@ var CONTENTS = [
   'виллабаджо'
 ];
 
+
 /**
  * Генерирует случайное число в диапазоне от min до max (включительно)
  * @param  {number} min - минимальное число
@@ -138,6 +139,7 @@ var generatesData = function (count) {
   return data;
 };
 
+
 var goodListElement = document.querySelector('.catalog__cards');
 goodListElement.classList.remove('catalog__cards--load');
 
@@ -148,22 +150,12 @@ var catalogCardTemplate = document.querySelector('#card')
   .content
   .querySelector('.catalog__card');
 
-if (NUMBER_OF_GOODS === 0) {
-  catalogCardTemplate.classList.remove('card--in-stock');
-  catalogCardTemplate.classList.add('card--soon');
-} else if (NUMBER_OF_GOODS >= 1 && NUMBER_OF_GOODS <= 5) {
-  catalogCardTemplate.classList.remove('card--in-stock');
-  catalogCardTemplate.classList.add('card--little');
-} else {
-  catalogCardTemplate.classList.add('card--in-stock');
-}
-
 /**
- * Отрисовывает товар
+ * Отрисовывает карточку товара в каталоге
  * @param  {object} good - описание товара
  * @return {DOM}         - DOM-элемент товара
  */
-var renderGood = function (good) {
+var renderCatalogCard = function (good) {
   var goodElement = catalogCardTemplate.cloneNode(true);
   var goodRatingElement = goodElement.querySelector('.stars__rating');
 
@@ -171,6 +163,9 @@ var renderGood = function (good) {
   goodElement.querySelector('.card__img').src = good.picture;
   goodElement.querySelector('.card__img').alt = good.name;
   goodElement.querySelector('.card__price').innerHTML = `${good.price} <span class="card__currency">₽</span><span class="card__weight">/ ${good.weight} Г</span>`;
+  goodElement.querySelector('.star__count').textContent = good.rating.number;
+  goodElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
+  goodElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.contents;
 
   switch (good.rating.value) {
     case 1:
@@ -193,24 +188,63 @@ var renderGood = function (good) {
       break;
   }
 
-  goodElement.querySelector('.star__count').textContent = good.rating.number;
-  goodElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
-  goodElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.contents;
-
   return goodElement;
 };
 
-var insertElements = function (parentElement) {
+var goodsCardsListElement = document.querySelector('.goods__cards');
+goodsCardsListElement.classList.remove('goods__cards--empty');
+
+var emptyCartElement = document.querySelector('.goods__card-empty');
+emptyCartElement.classList.add('visually-hidden');
+
+var goodCardTemplate = document.querySelector('#card-order')
+  .content
+  .querySelector('.goods_card');
+
+/**
+ * Отрисовывает товар в корзине
+ * @param  {object} good - описание товара
+ * @return {DOM}         - DOM-элемент товара
+ */
+var renderGoodInCart = function (good) {
+  var goodInCartElement = goodCardTemplate.cloneNode(true);
+
+  goodInCartElement.querySelector('.card-order__title').textContent = good.name;
+  goodInCartElement.querySelector('.card-order__img').src = good.picture;
+  goodInCartElement.querySelector('.card-order__img').alt = good.name;
+  goodInCartElement.querySelector('.card-order__price').textContent = `${good.price} ₽`;
+
+  return goodInCartElement;
+};
+
+/**
+ * Вставляет DOM-элементы товаров в нужное место в DOM
+ * @param  {DOM} parentElement    - контейнер для вставки товаров
+ * @param  {number} numberOfGoods - количество товаров
+ */
+var insertElements = function (parentElement, numberOfGoods) {
   var fragment = document.createDocumentFragment();
-  var goods = generatesData(NUMBER_OF_GOODS);
+  var goods = generatesData(numberOfGoods);
 
   goods.forEach(function (good) {
-    fragment.appendChild(renderGood(good));
+    if (parentElement.className === 'catalog__cards') {
+
+      if (numberOfGoods === 0) {
+        catalogCardTemplate.classList.add('card--soon');
+      } else if (numberOfGoods >= 1 && numberOfGoods <= 5) {
+        catalogCardTemplate.classList.add('card--little');
+      } else {
+        catalogCardTemplate.classList.add('card--in-stock');
+      }
+
+      fragment.appendChild(renderGood(good));
+    } else if (parentElement.className === 'goods__cards') {
+      fragment.appendChild(renderGoodInCart(good));
+    }
   });
 
   parentElement.appendChild(fragment);
 };
 
-insertElements(goodListElement);
-
-var goodsInCart = generatesData(NUMBER_OF_GOODS_IN_CART);
+insertElements(goodListElement, NUMBER_OF_GOODS);
+insertElements(goodsCardsListElement, NUMBER_OF_GOODS_IN_CART);
