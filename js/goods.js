@@ -1,7 +1,7 @@
 'use strict';
 
-var NUMBER_OF_GOODS = 5;
-var NUMBER_OF_GOODS_IN_CART = 3;
+var NUMBER_OF_GOODS_IN_CATALOG = 5;
+var NUMBER_OF_GOODS_IN_BASKET = 3;
 
 var NAMES = [
   'Чесночные сливки',
@@ -34,7 +34,7 @@ var NAMES = [
   'Острый язычок'
 ];
 
-var IMAGES = [
+var PHOTO = [
   'gum-cedar.jpg',
   'gum-chile.jpg',
   'gum-eggplant.jpg',
@@ -65,7 +65,7 @@ var IMAGES = [
   'soda-russian.jpg'
 ];
 
-var CONTENTS = [
+var INGREDIENTS = [
   'молоко',
   'сливки',
   'вода',
@@ -86,6 +86,29 @@ var CONTENTS = [
   'виллабаджо'
 ];
 
+var ratingMap = {
+  1: 'one',
+  2: 'two',
+  3: 'three',
+  4: 'four',
+  5: 'five'
+};
+
+var catalogCardsListElement = document.querySelector('.catalog__cards');
+catalogCardsListElement.classList.remove('catalog__cards--load');
+
+var loaderElement = catalogCardsListElement.querySelector('.catalog__load');
+loaderElement.classList.add('visually-hidden');
+
+var basketCardsListElement = document.querySelector('.goods__cards');
+basketCardsListElement.classList.remove('goods__cards--empty');
+
+var emptyCartElement = document.querySelector('.goods__card-empty');
+emptyCartElement.classList.add('visually-hidden');
+
+// Шаблоны
+var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
+var basketCardTemplate = document.querySelector('#card-order').content.querySelector('.goods_card');
 
 /**
  * Генерирует случайное число в диапазоне от min до max (включительно)
@@ -108,7 +131,7 @@ var generateString = function (array) {
 };
 
 /**
- * Генерирует данные
+ * Генерирует массив объектов
  * @param  {number} count - количество объектов в массиве
  * @return {array}        - массив с объектами
  */
@@ -116,9 +139,9 @@ var generatesData = function (count) {
   var data = [];
 
   for (var i = 0; i < count; i++) {
-    var product = {
+    var good = {
       name: NAMES[generateRandomNumber(0, NAMES.length - 1)],
-      picture: 'img/cards/' + IMAGES[generateRandomNumber(0, IMAGES.length - 1)],
+      picture: 'img/cards/' + PHOTO[generateRandomNumber(0, PHOTO.length - 1)],
       amount: generateRandomNumber(0, 20),
       price: generateRandomNumber(100, 1500),
       weight: generateRandomNumber(30, 300),
@@ -127,28 +150,26 @@ var generatesData = function (count) {
         number: generateRandomNumber(10, 900)
       },
       nutritionFacts: {
-        sugar: !!generateRandomNumber(0, 1),
+        sugar: Boolean(generateRandomNumber(0, 1)),
         energy: generateRandomNumber(70, 500),
-        contents: generateString(CONTENTS)
+        ingredients: generateString(INGREDIENTS)
       }
     };
 
-    data.push(product);
+    data.push(good);
   }
 
   return data;
 };
 
-
-var goodListElement = document.querySelector('.catalog__cards');
-goodListElement.classList.remove('catalog__cards--load');
-
-var loaderElement = goodListElement.querySelector('.catalog__load');
-loaderElement.classList.add('visually-hidden');
-
-var catalogCardTemplate = document.querySelector('#card')
-  .content
-  .querySelector('.catalog__card');
+/**
+ * Возвращает класс, соответствующий рейтингу товара
+ * @param  {number} value - значение рейтинга
+ * @return {string}       - класс, соответствующий рейтингу
+ */
+var getRatingClassName = function (value) {
+  return 'stars__rating--' + ratingMap[value];
+};
 
 /**
  * Отрисовывает карточку товара в каталоге
@@ -156,65 +177,35 @@ var catalogCardTemplate = document.querySelector('#card')
  * @return {DOM}         - DOM-элемент товара
  */
 var renderCatalogCard = function (good) {
-  var goodElement = catalogCardTemplate.cloneNode(true);
-  var goodRatingElement = goodElement.querySelector('.stars__rating');
+  var catalogCardElement = catalogCardTemplate.cloneNode(true);
 
-  goodElement.querySelector('.card__title').textContent = good.name;
-  goodElement.querySelector('.card__img').src = good.picture;
-  goodElement.querySelector('.card__img').alt = good.name;
-  goodElement.querySelector('.card__price').innerHTML = `${good.price} <span class="card__currency">₽</span><span class="card__weight">/ ${good.weight} Г</span>`;
-  goodElement.querySelector('.star__count').textContent = good.rating.number;
-  goodElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
-  goodElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.contents;
+  catalogCardElement.querySelector('.card__title').textContent = good.name;
+  catalogCardElement.querySelector('.card__img').src = good.picture;
+  catalogCardElement.querySelector('.card__img').alt = good.name;
+  catalogCardElement.querySelector('.card__price').firstChild.textContent = good.price;
+  catalogCardElement.querySelector('.card__weight').textContent = '/ ' + good.weight + ' Г';
+  catalogCardElement.querySelector('.stars__rating').classList.add(getRatingClassName(good.rating.value));
+  catalogCardElement.querySelector('.star__count').textContent = good.rating.number;
+  catalogCardElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
+  catalogCardElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.ingredients;
 
-  switch (good.rating.value) {
-    case 1:
-      goodRatingElement.classList.add('stars__rating--one');
-      break;
-    case 2:
-      goodRatingElement.classList.add('stars__rating--two');
-      break;
-    case 3:
-      goodRatingElement.classList.add('stars__rating--three');
-      break;
-    case 4:
-      goodRatingElement.classList.add('stars__rating--four');
-      break;
-    case 5:
-      goodRatingElement.classList.add('stars__rating--five');
-      break;
-    default:
-      goodRatingElement.classList.add('stars__rating--five');
-      break;
-  }
-
-  return goodElement;
+  return catalogCardElement;
 };
-
-var goodsCardsListElement = document.querySelector('.goods__cards');
-goodsCardsListElement.classList.remove('goods__cards--empty');
-
-var emptyCartElement = document.querySelector('.goods__card-empty');
-emptyCartElement.classList.add('visually-hidden');
-
-var goodCardTemplate = document.querySelector('#card-order')
-  .content
-  .querySelector('.goods_card');
 
 /**
  * Отрисовывает товар в корзине
  * @param  {object} good - описание товара
  * @return {DOM}         - DOM-элемент товара
  */
-var renderGoodInCart = function (good) {
-  var goodInCartElement = goodCardTemplate.cloneNode(true);
+var renderBasketCard = function (good) {
+  var basketCardElement = basketCardTemplate.cloneNode(true);
 
-  goodInCartElement.querySelector('.card-order__title').textContent = good.name;
-  goodInCartElement.querySelector('.card-order__img').src = good.picture;
-  goodInCartElement.querySelector('.card-order__img').alt = good.name;
-  goodInCartElement.querySelector('.card-order__price').textContent = `${good.price} ₽`;
+  basketCardElement.querySelector('.card-order__title').textContent = good.name;
+  basketCardElement.querySelector('.card-order__img').src = good.picture;
+  basketCardElement.querySelector('.card-order__img').alt = good.name;
+  basketCardElement.querySelector('.card-order__price').textContent = `${good.price} ₽`;
 
-  return goodInCartElement;
+  return basketCardElement;
 };
 
 /**
@@ -229,22 +220,22 @@ var insertElements = function (parentElement, numberOfGoods) {
   goods.forEach(function (good) {
     if (parentElement.className === 'catalog__cards') {
 
-      if (numberOfGoods === 0) {
-        catalogCardTemplate.classList.add('card--soon');
+      if (numberOfGoods > 5) {
+        catalogCardTemplate.classList.add('card--in-stock');
       } else if (numberOfGoods >= 1 && numberOfGoods <= 5) {
         catalogCardTemplate.classList.add('card--little');
       } else {
-        catalogCardTemplate.classList.add('card--in-stock');
+        catalogCardTemplate.classList.add('card--soon');
       }
 
-      fragment.appendChild(renderGood(good));
+      fragment.appendChild(renderCatalogCard(good));
     } else if (parentElement.className === 'goods__cards') {
-      fragment.appendChild(renderGoodInCart(good));
+      fragment.appendChild(renderBasketCard(good));
     }
   });
 
   parentElement.appendChild(fragment);
 };
 
-insertElements(goodListElement, NUMBER_OF_GOODS);
-insertElements(goodsCardsListElement, NUMBER_OF_GOODS_IN_CART);
+insertElements(catalogCardsListElement, NUMBER_OF_GOODS_IN_CATALOG);
+insertElements(basketCardsListElement, NUMBER_OF_GOODS_IN_BASKET);
