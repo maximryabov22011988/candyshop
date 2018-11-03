@@ -1,5 +1,7 @@
 'use strict';
 
+var ENTER_KEYCODE = 13;
+
 var NUMBER_OF_GOODS_IN_CATALOG = 5;
 var NUMBER_OF_GOODS_IN_BASKET = 3;
 
@@ -98,13 +100,12 @@ var catalogCardsListElement = document.querySelector('.catalog__cards');
 catalogCardsListElement.classList.remove('catalog__cards--load');
 
 var loaderElement = catalogCardsListElement.querySelector('.catalog__load');
+var emptyCartElement = document.querySelector('.goods__card-empty');
 loaderElement.classList.add('visually-hidden');
+emptyCartElement.classList.add('visually-hidden');
 
 var basketCardsListElement = document.querySelector('.goods__cards');
 basketCardsListElement.classList.remove('goods__cards--empty');
-
-var emptyCartElement = document.querySelector('.goods__card-empty');
-emptyCartElement.classList.add('visually-hidden');
 
 // Шаблоны
 var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
@@ -239,3 +240,20 @@ var insertElements = function (parentElement, numberOfGoods) {
 
 insertElements(catalogCardsListElement, NUMBER_OF_GOODS_IN_CATALOG);
 insertElements(basketCardsListElement, NUMBER_OF_GOODS_IN_BASKET);
+
+
+var addCardToFavorites = function (evt) {
+  evt.preventDefault();
+  var target = evt.target;
+
+  if (target.classList.contains('card__btn-favorite')) {
+    target.classList.toggle('card__btn-favorite--selected');
+  }
+};
+
+catalogCardsListElement.addEventListener('click', addCardToFavorites);
+catalogCardsListElement.addEventListener('keydown', function (evt) {
+  if (evt.which === ENTER_KEYCODE) {
+    addCardToFavorites(evt);
+  }
+});
