@@ -615,6 +615,9 @@ body {
   background-color: #6e58d9;
   transition: background-color 0.2s ease
 }
+.card__btn-favorite--selected {
+  background-color: #8269ff
+}
 .card__btn {
   display: flex;
   align-items: center;
@@ -672,7 +675,6 @@ body {
 .goods__title {
   margin-bottom: 50px;
 }
-
 .goods__card-wrap {
   display: flex;
   flex-direction: column;
@@ -774,6 +776,7 @@ body {
   position: absolute;
   top: 15px;
   left: 22px;
+  width: 200px;
   margin: 0;
   font-size: 24px;
   line-height: 30px;
