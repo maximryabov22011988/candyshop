@@ -661,7 +661,19 @@ body {
 .card--soon:hover .card__main {
   box-shadow: 0 8px 18px 0 rgb(232, 232, 232);
 }
-
+.card--little .card__btn--disabled,
+.card--little .card__btn--disabled:hover,
+.card--little .card__btn--disabled:focus,
+.card--in-stock .card__btn--disabled,
+.card--in-stock .card__btn--disabled:hover,
+.card--in-stock .card__btn--disabled:focus,
+.card--soon .card__btn--disabled,
+.card--soon .card__btn--disabled:hover,
+.card--soon .card__btn--disabled:focus {
+  background-color: #e8e8e8;
+  opacity: 0.75;
+  cursor: default;
+}
 /*goods*/
 .goods {
   padding-top: 65px;
@@ -841,9 +853,9 @@ body {
   border: 0;
   border-radius: 50%;
   padding: 0;
-  padding-left: 15px;
   margin-left: 8px;
   margin-right: 8px;
+  text-align: center;
 }
 .card-order__count:hover,
 .card-order__count:focus {
