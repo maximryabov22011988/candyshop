@@ -703,7 +703,7 @@ body {
   margin-right: 0;
 }
 .goods__total {
-  align-self: flex-end;
+  align-self: flex-start;
   display: flex;
   align-items: baseline;
 }
