@@ -107,7 +107,11 @@ var emptyBasketElement = document.querySelector('.goods__card-empty');
 var basketCardsListElement = document.querySelector('.goods__cards');
 basketCardsListElement.classList.remove('goods__cards--empty');
 
-var orderForm = document.querySelector('.order');
+var orderForm = document.querySelector('#order');
+var deliveryCourierContent = orderForm.querySelector('.deliver__courier');
+var deliveryStoreContent = orderForm.querySelector('.deliver__store');
+var paymentCardContent = orderForm.querySelector('.payment__card-wrap');
+var paymentCashContent = orderForm.querySelector('.payment__cash-wrap');
 
 /**
  * Шаблоны
@@ -617,22 +621,37 @@ catalogCardsListElement.addEventListener('keydown', function (evt) {
   }
 });
 
-var toggleDeliveryElements = orderForm.querySelector('.deliver__toggle');
-var deliveryCourier = orderForm.querySelector('.deliver__courier');
-var deliveryStore = orderForm.querySelector('.deliver__store');
-
-var selectDeliveryOption = function (evt) {
+var toggleTab = function (evt) {
   var target = evt.target;
 
-  if (target.id === 'deliver__courier') {
-    deliveryCourier.classList.remove('visually-hidden');
-    deliveryStore.classList.add('visually-hidden');
-  } else {
-    deliveryStore.classList.remove('visually-hidden');
-    deliveryCourier.classList.add('visually-hidden');
+  switch (target.id) {
+    case 'deliver__courier':
+      deliveryCourierContent.classList.remove('visually-hidden');
+      deliveryStoreContent.classList.add('visually-hidden');
+      break;
+    case 'deliver__store':
+      deliveryStoreContent.classList.remove('visually-hidden');
+      deliveryCourierContent.classList.add('visually-hidden');
+      break;
+    case 'payment__card':
+      paymentCardContent.classList.remove('visually-hidden');
+      paymentCashContent.classList.add('visually-hidden');
+      break;
+    case 'payment__cash':
+      paymentCashContent.classList.remove('visually-hidden');
+      paymentCardContent.classList.add('visually-hidden');
+      break;
   }
+
 };
 
-toggleDeliveryElements.addEventListener('click', function (evt) {
-  selectDeliveryOption(evt);
+orderForm.addEventListener('click', function (evt) {
+  toggleTab(evt);
+});
+
+// Доработать переключение с клавиатуры!!!!!!!!!!!!
+orderForm.addEventListener('keydown', function (evt) {
+  if (evt.which === KEYCODE_ENTER) {
+    toggleTab(evt);
+  }
 });
