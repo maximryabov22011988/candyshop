@@ -616,3 +616,23 @@ catalogCardsListElement.addEventListener('keydown', function (evt) {
     addCardToFavorites(evt);
   }
 });
+
+var toggleDeliveryElements = orderForm.querySelector('.deliver__toggle');
+var deliveryCourier = orderForm.querySelector('.deliver__courier');
+var deliveryStore = orderForm.querySelector('.deliver__store');
+
+var selectDeliveryOption = function (evt) {
+  var target = evt.target;
+
+  if (target.id === 'deliver__courier') {
+    deliveryCourier.classList.remove('visually-hidden');
+    deliveryStore.classList.add('visually-hidden');
+  } else {
+    deliveryStore.classList.remove('visually-hidden');
+    deliveryCourier.classList.add('visually-hidden');
+  }
+};
+
+toggleDeliveryElements.addEventListener('click', function (evt) {
+  selectDeliveryOption(evt);
+});
