@@ -668,3 +668,39 @@ orderForm.addEventListener('keydown', function (evt) {
     toggleTab(evt);
   }
 });
+
+var rangeFilterElement = document.querySelector('.range');
+var rangeButtonMin = rangeFilterElement.querySelector('.range__btn--left');
+var rangeButtonMax = rangeFilterElement.querySelector('.range__btn--right');
+var rangePriceMin = rangeFilterElement.querySelector('.range__price--min');
+var rangePriceMax = rangeFilterElement.querySelector('.range__price--max');
+
+var position = {
+  min: rangeFilterElement.getBoundingClientRect().left,
+  max: rangeFilterElement.getBoundingClientRect().right
+};
+
+var rangePosition = {
+  buttonMin: rangeButtonMin.getBoundingClientRect().left,
+  buttonMax: rangeButtonMax.getBoundingClientRect().right
+};
+
+
+var changePriceRange = function (evt) {
+  var target = evt.target;
+  var targetClass = target.classList;
+
+  if (!targetClass.contains('range__btn')) return;
+
+  if (targetClass.contains('range__btn--left')) {
+    rangePriceMin.textContent = Math.floor(((rangePosition.buttonMin - position.min) / (position.max - position.min)) * 100);
+  } else if (targetClass.contains('range__btn--right')) {
+    rangePriceMax.textContent = Math.floor(((rangePosition.buttonMax - position.min) / (position.max - position.min)) * 100);
+  }
+
+  target.blur();
+};
+
+rangeFilterElement.addEventListener('mouseup', function (evt) {
+  changePriceRange(evt);
+});
