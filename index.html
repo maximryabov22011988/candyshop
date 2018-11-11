@@ -144,7 +144,7 @@
     <section class="buy">
       <h2 class="visually-hidden">Оформление покупки</h2>
 
-      <form action="/" method="post">
+      <form action="/" method="POST" novalidate="true">
         <section class="goods">
           <div class="goods__wrap container">
             <h2 class="group-title goods__title" id="basket">Твои покупки</h2>
@@ -171,27 +171,26 @@
 
           <section class="contact-data container">
             <div class="contact-data__inner">
-              <h3 class="contact-data__greet">Давай знакомиться</h3>
+              <h3 class="contact-data__greet">Давайте знакомиться</h3>
 
               <ul class="contact-data__inputs">
                 <li class="text-input contact-data__input-wrap">
-                  <input type="text" class="text-input__input" name="name" id="contact-data__name" placeholder="Имя">
-                  <label for="contact-data__name" class="text-input__label">Имя</label>
+                  <input type="text" class="text-input__input" name="name" id="contact-data__name" maxlength="120" placeholder="Имя" required>
+                  <label for="contact-data__name" class="text-input__label">Ваше имя</label>
                 </li>
 
                 <li class="text-input contact-data__input-wrap">
-                  <input type="text" class="text-input__input" name="tel" id="contact-data__tel" placeholder="Телефон">
-                  <label for="contact-data__tel" class="text-input__label">Телефон</label>
+                  <input type="text" class="text-input__input" name="tel" id="contact-data__tel" minlength="12" maxlength="18" placeholder="Телефон" required>
+                  <label for="contact-data__tel" class="text-input__label">+7 (000) 000 00 00</label>
                 </li>
 
                 <li class="text-input contact-data__input-wrap">
-                  <input type="text" class="text-input__input" name="email" id="contact-data__email" placeholder="Почта">
-                  <label for="contact-data__email" class="text-input__label">Почта</label>
+                  <input type="email" class="text-input__input" name="email" id="contact-data__email" maxlength="30" placeholder="Почта">
+                  <label for="contact-data__email" class="text-input__label">vashapochta@domain.ru</label>
                 </li>
 
               </ul>
               <div class="describe">
-                <p class="describe__text">Привет наш единомышленник по вкусам.</p>
                 <p class="describe__text">Смело заполняй поле с телефоном — не будем надоедать сообщениями. Обещаем ;)</p>
                 <p class="describe__text">Написать почту оставляем на твоё усмотрение,
                   но мы очень стараемся над рассылкой и будем рады если заценишь. :D Посмотришь? Тогда давай почту! </p>
@@ -215,27 +214,26 @@
                 <div class="payment__inputs">
                   <div class="payment__card-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-number">
-                      <input type="text" class="text-input__input" name="card-number" id="payment__card-number" placeholder="Номер карты">
+                      <input type="text" class="text-input__input" name="card-number" id="payment__card-number" minlength="19" maxlength="19" pattern="[0-9]{4}\s[0-9]{4}\s[0-9]{4}\s[0-9]{4}" placeholder="Номер карты" required>
                       <label class="text-input__label" for="payment__card-number">Номер карты</label>
                     </p>
 
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-date">
-                      <input type="text" class="text-input__input" name="card-date" id="payment__card-date" placeholder="мм/гг">
-                      <label class="text-input__label" for="payment__card-date">мм/гг</label>
+                      <input type="text" class="text-input__input" name="card-date" id="payment__card-date" minlength="5" maxlength="5" pattern="^[0-9]{2}[/]{1}[0-9]{2}$" placeholder="мм/гг" required>
+                      <label class="text-input__label" for="payment__card-date">Срок</label>
                     </p>
 
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--cvc">
-                      <input type="text" class="text-input__input" name="card-cvc" id="payment__card-cvc" placeholder="CVC">
+                      <input type="text" class="text-input__input" name="card-cvc" id="payment__card-cvc" minlength="3" maxlength="3" pattern="[0-9]{3}" placeholder="CVC" required>
                       <label class="text-input__label text-input__label--lock" for="payment__card-cvc">CVC</label>
                     </p>
 
                   </div>
                   <div class="payment__cardholder-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--cardholder">
-                      <input type="text" class="text-input__input" name="cardholder" id="payment__cardholder" placeholder="ИМЯ ДЕРЖАТЕЛЯ">
-                      <label class="text-input__label" for="payment__cardholder">ИМЯ ДЕРЖАТЕЛЯ</label>
+                      <input type="text" class="text-input__input" name="cardholder" id="payment__cardholder" maxlength="100" placeholder="ИМЯ ДЕРЖАТЕЛЯ" required>
+                      <label class="text-input__label" for="payment__cardholder">IVAN PETROV</label>
                     </p>
-
                     <div class="payment__card-status-wrap">
                       <p class="payment__card-status-message">Статус карты: <span class="payment__card-status">Не определён</span></p>
                       <p class="payment__error-message visually-hidden">Система определяет ошибку и пишет где ошибка под неправильным полем</p>
@@ -337,22 +335,22 @@
 
                 <ul class="deliver__address-entry-fields">
                   <li class="text-input deliver__street">
-                    <input type="text" class="text-input__input" name="deliver-street" id="deliver__street" placeholder="Улица">
+                    <input type="text" class="text-input__input" name="deliver-street" id="deliver__street" maxlength="40" placeholder="Улица" required>
                     <label class="text-input__label" for="deliver__street">Улица</label>
                   </li>
 
                   <li class="text-input deliver__house">
-                    <input type="text" class="text-input__input" name="deliver-house" id="deliver__house" placeholder="Дом">
+                    <input type="text" class="text-input__input" name="deliver-house" id="deliver__house" maxlength="20" placeholder="Дом" required>
                     <label class="text-input__label" for="deliver__house">Дом</label>
                   </li>
 
                   <li class="text-input deliver__floor">
-                    <input type="text" class="text-input__input" name="deliver-floor" id="deliver__floor" placeholder="Эт.">
+                    <input type="text" class="text-input__input" name="deliver-floor" id="deliver__floor" maxlength="2" placeholder="Эт.">
                     <label class="text-input__label" for="deliver__floor">Эт.</label>
                   </li>
 
                   <li class="text-input deliver__room">
-                    <input type="text" class="text-input__input" name="deliver-room" id="deliver__room" placeholder="Кв.">
+                    <input type="text" class="text-input__input" name="deliver-room" id="deliver__room" maxlength="3" placeholder="Кв." required>
                     <label class="text-input__label" for="deliver__room">Кв.</label>
                   </li>
                 </ul>
