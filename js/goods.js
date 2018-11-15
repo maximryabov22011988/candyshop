@@ -2,6 +2,7 @@
 
 var KEYCODE_ENTER = 13;
 var KEYCODE_BACKSPACE = 8;
+var KEYCODE_LEFT_MOUSE_BUTTON = 1;
 var KEYCODE_0 = 48;
 var KEYCODE_9 = 57;
 var NUMBER_OF_GOODS_IN_CATALOG = 6;
@@ -669,43 +670,100 @@ orderForm.addEventListener('keydown', function (evt) {
   }
 });
 
-var rangeFilterElement = document.querySelector('.range');
-var rangeButtonMin = rangeFilterElement.querySelector('.range__btn--left');
-var rangeButtonMax = rangeFilterElement.querySelector('.range__btn--right');
-var rangePriceMin = rangeFilterElement.querySelector('.range__price--min');
-var rangePriceMax = rangeFilterElement.querySelector('.range__price--max');
-
-var position = {
-  min: rangeFilterElement.getBoundingClientRect().left,
-  max: rangeFilterElement.getBoundingClientRect().right
-};
-
-var rangePosition = {
-  buttonMin: rangeButtonMin.getBoundingClientRect().left,
-  buttonMax: rangeButtonMax.getBoundingClientRect().right
-};
 
 
-var changePriceRange = function (evt) {
+
+var rangeFilter = document.querySelector('.range__filter');
+var rangeFilterWidth = rangeFilter.getBoundingClientRect().width;
+var leftPin = rangeFilter.querySelector('.range__btn--left');
+var rightPin = rangeFilter.querySelector('.range__btn--right');
+var pinWidth = rightPin.getBoundingClientRect().width;
+var rangeFillLine = rangeFilter.querySelector('.range__fill-line');
+
+
+
+rangeFilter.addEventListener('mousedown', function (evt) {
   var target = evt.target;
   var targetClass = target.classList;
 
-  if (!targetClass.contains('range__btn')) return;
+  if (!targetClass.contains('range__btn') || evt.which !== KEYCODE_LEFT_MOUSE_BUTTON) return;
 
-  if (targetClass.contains('range__btn--left')) {
-    rangePriceMin.textContent = Math.floor(((rangePosition.buttonMin - position.min) / (position.max - position.min)) * 100);
-  } else if (targetClass.contains('range__btn--right')) {
-    rangePriceMax.textContent = Math.floor(((rangePosition.buttonMax - position.min) / (position.max - position.min)) * 100);
-  }
+  var pinCoords = {
+    leftPin: {
+      startX: leftPin.offsetLeft
+    },
+    rightPin: {
+      startX: rightPin.offsetLeft
+    }
+  };
 
-  target.blur();
-};
+  var moveRangeButton = function (moveEvt) {
+    var leftEdge;
+    var rightEdge;
+    var newX;
 
-rangeFilterElement.addEventListener('mouseup', function (evt) {
-  changePriceRange(evt);
+    if (targetClass.contains('range__btn--left')) {
+      leftEdge = 0;
+      rightEdge = pinCoords.rightPin.startX - pinWidth;
+      newX = pinCoords.leftPin.startX + (moveEvt.clientX - evt.clientX);
+
+      if (newX < leftEdge) {
+        newX = 0;
+      } else if (newX > rightEdge) {
+        newX = rightEdge;
+      }
+
+      leftPin.style.left = newX + 'px';
+      rangeFillLine.style.left = newX + 'px';
+
+    } else if (targetClass.contains('range__btn--right')) {
+      leftEdge = 0;
+      rightEdge = rangeFilterWidth - (pinCoords.leftPin.startX + pinWidth * 2);
+      newX = rangeFilterWidth - pinCoords.rightPin.startX - (moveEvt.clientX - evt.clientX);
+
+      if (newX < leftEdge) {
+        newX = leftEdge;
+      } else if (newX > rightEdge) {
+        newX = rightEdge;
+      }
+
+      rightPin.style.right = newX + 'px';
+      rangeFillLine.style.right = newX + 'px';
+    }
+  };
+
+  var fixRangeButton = function () {
+    document.removeEventListener('mousemove', moveRangeButton);
+    document.removeEventListener('mouseup', fixRangeButton);
+  };
+
+  document.addEventListener('mousemove', moveRangeButton);
+  document.addEventListener('mouseup', fixRangeButton);
 });
 
+// var rangeFilterElement = document.querySelector('.range');
+// var rangePriceMin = rangeFilterElement.querySelector('.range__price--min');
+// var rangePriceMax = rangeFilterElement.querySelector('.range__price--max');
 
+// Доработать, чтобы брала мин и мак значение из каталога
+// var changeRangePrice = function (evt) {
+//   var target = evt.target;
+//   var targetClass = target.classList;
+
+//   if (!targetClass.contains('range__btn')) return;
+
+//   if (targetClass.contains('range__btn--left')) {
+//     rangePriceMin.textContent = Math.floor(((rangePosition.buttonMin - position.min) / (position.max - position.min)) * 1000);
+//   } else if (targetClass.contains('range__btn--right')) {
+//     rangePriceMax.textContent = Math.floor(((rangePosition.buttonMax - position.min) / (position.max - position.min)) * 10000);
+//   }
+
+//   target.blur();
+// };
+
+// rangeFilterElement.addEventListener('mouseup', function (evt) {
+//   changeRangePrice(evt);
+// });
 
 
 

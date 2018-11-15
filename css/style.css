@@ -1312,23 +1312,17 @@ body {
   border-radius: 50%;
   cursor: pointer;
 }
-.range__btn:hover,
-.range__btn:active,
-.range__btn:focus {
-  box-shadow: 0 0 0 4px #e8e8e8;
-  outline: none;
-}
 .range__btn--left {
-  left: 0%;
+  left: 0;
 }
 .range__btn--right {
-  right: 0%;
+  right: 0;
 }
 .range__fill-line {
   position: absolute;
   background-color: #6e58d9;
-  left: 0%;
-  right: 0%;
+  left: 0;
+  right: 0;
   top: 3px;
   height: 4px;
 }
