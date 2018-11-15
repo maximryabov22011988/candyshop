@@ -671,22 +671,50 @@ orderForm.addEventListener('keydown', function (evt) {
 });
 
 
-
-
-var rangeFilter = document.querySelector('.range__filter');
-var rangeFilterWidth = rangeFilter.getBoundingClientRect().width;
-var leftPin = rangeFilter.querySelector('.range__btn--left');
-var rightPin = rangeFilter.querySelector('.range__btn--right');
+var rangeElement = document.querySelector('.range');
+var rangeControlElement = document.querySelector('.range__filter');
+var rangePriceMin = rangeElement.querySelector('.range__price--min');
+var rangePriceMax = rangeElement.querySelector('.range__price--max');
+var rangeControlWidth = rangeControlElement.getBoundingClientRect().width;
+var leftPin = rangeControlElement.querySelector('.range__btn--left');
+var rightPin = rangeControlElement.querySelector('.range__btn--right');
 var pinWidth = rightPin.getBoundingClientRect().width;
-var rangeFillLine = rangeFilter.querySelector('.range__fill-line');
+var rangeFillLine = rangeControlElement.querySelector('.range__fill-line');
 
+rangePriceMin.textContent = 0;
+rangePriceMax.textContent = 10000;
 
+var calcPrice = function (moveX, startX, price, isleftPin) {
+  var priceDiff = Math.floor((Math.abs(moveX - startX) / rangeControlWidth) * price);
+  return isleftPin ? (price - priceDiff) : priceDiff;
+};
 
-rangeFilter.addEventListener('mousedown', function (evt) {
+var movePinTo = function (newX, leftEdge, rightEdge, isLeftPin) {
+  if (newX < leftEdge) {
+    newX = leftEdge;
+  } else if (newX > rightEdge) {
+    newX = rightEdge;
+  }
+
+  if (isLeftPin) {
+    leftPin.style.left = newX + 'px';
+    rangeFillLine.style.left = newX + 'px';
+    rangePriceMin.textContent = calcPrice(newX, rangeControlWidth, 10000, isLeftPin);
+  } else {
+    rightPin.style.right = newX + 'px';
+    rangeFillLine.style.right = newX + 'px';
+    rangePriceMax.textContent = calcPrice(newX, rangeControlWidth, 10000);
+  }
+};
+
+rangeControlElement.addEventListener('mousedown', function (evt) {
   var target = evt.target;
   var targetClass = target.classList;
+  var isPin = targetClass.contains('range__btn');
+  var isLeftPin = targetClass.contains('range__btn--left');
+  var isRightPin = targetClass.contains('range__btn--right');
 
-  if (!targetClass.contains('range__btn') || evt.which !== KEYCODE_LEFT_MOUSE_BUTTON) return;
+  if (!isPin || evt.which !== KEYCODE_LEFT_MOUSE_BUTTON) return;
 
   var pinCoords = {
     leftPin: {
@@ -698,37 +726,14 @@ rangeFilter.addEventListener('mousedown', function (evt) {
   };
 
   var moveRangeButton = function (moveEvt) {
-    var leftEdge;
-    var rightEdge;
     var newX;
 
-    if (targetClass.contains('range__btn--left')) {
-      leftEdge = 0;
-      rightEdge = pinCoords.rightPin.startX - pinWidth;
+    if (isLeftPin) {
       newX = pinCoords.leftPin.startX + (moveEvt.clientX - evt.clientX);
-
-      if (newX < leftEdge) {
-        newX = 0;
-      } else if (newX > rightEdge) {
-        newX = rightEdge;
-      }
-
-      leftPin.style.left = newX + 'px';
-      rangeFillLine.style.left = newX + 'px';
-
-    } else if (targetClass.contains('range__btn--right')) {
-      leftEdge = 0;
-      rightEdge = rangeFilterWidth - (pinCoords.leftPin.startX + pinWidth * 2);
-      newX = rangeFilterWidth - pinCoords.rightPin.startX - (moveEvt.clientX - evt.clientX);
-
-      if (newX < leftEdge) {
-        newX = leftEdge;
-      } else if (newX > rightEdge) {
-        newX = rightEdge;
-      }
-
-      rightPin.style.right = newX + 'px';
-      rangeFillLine.style.right = newX + 'px';
+      movePinTo(newX, 0, (pinCoords.rightPin.startX - pinWidth), isLeftPin);
+    } else if (isRightPin) {
+      newX = rangeControlWidth - pinCoords.rightPin.startX - (moveEvt.clientX - evt.clientX);
+      movePinTo(newX, 0, (rangeControlWidth - (pinCoords.leftPin.startX + pinWidth * 2)));
     }
   };
 
@@ -741,11 +746,8 @@ rangeFilter.addEventListener('mousedown', function (evt) {
   document.addEventListener('mouseup', fixRangeButton);
 });
 
-// var rangeFilterElement = document.querySelector('.range');
-// var rangePriceMin = rangeFilterElement.querySelector('.range__price--min');
-// var rangePriceMax = rangeFilterElement.querySelector('.range__price--max');
 
-// Доработать, чтобы брала мин и мак значение из каталога
+
 // var changeRangePrice = function (evt) {
 //   var target = evt.target;
 //   var targetClass = target.classList;
@@ -760,13 +762,6 @@ rangeFilter.addEventListener('mousedown', function (evt) {
 
 //   target.blur();
 // };
-
-// rangeFilterElement.addEventListener('mouseup', function (evt) {
-//   changeRangePrice(evt);
-// });
-
-
-
 
 
 var submitButton = orderForm.querySelector('.buy__submit-btn');
