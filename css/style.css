@@ -219,6 +219,7 @@ body {
   border-color: #6e58d9;
   background-color: #6e58d9;
   color: #ffffff;
+  cursor: default;
 }
 .toggle-btn__label:hover {
   background-color: transparent;
@@ -226,6 +227,7 @@ body {
   color: #343434;
   transition: color 0.2s ease,
   border-color 0.2s ease;
+  cursor: pointer;
 }
 .toggle-btn__label:first-of-type {
   margin-right: 14px;
@@ -875,6 +877,7 @@ body {
 .buy__submit-btn:hover {
   background-color: #6e58d9;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 .buy__submit-btn:focus {
   background-color: #8269ff;
