@@ -1350,6 +1350,13 @@ body {
   padding-right: 20px;
 }
 
+.range__price--min::after {
+  right: -12px;
+}
+.range__price--max::after {
+  right: 7px;
+}
+
 /*modal*/
 
 .modal {

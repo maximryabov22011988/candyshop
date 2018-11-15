@@ -681,8 +681,10 @@ var rightPin = rangeControlElement.querySelector('.range__btn--right');
 var pinWidth = rightPin.getBoundingClientRect().width;
 var rangeFillLine = rangeControlElement.querySelector('.range__fill-line');
 
+var maxPrice = 10000;
+
 rangePriceMin.textContent = 0;
-rangePriceMax.textContent = 10000;
+rangePriceMax.textContent = maxPrice;
 
 var calcPrice = function (moveX, startX, price, isleftPin) {
   var priceDiff = Math.floor((Math.abs(moveX - startX) / rangeControlWidth) * price);
@@ -699,11 +701,11 @@ var movePinTo = function (newX, leftEdge, rightEdge, isLeftPin) {
   if (isLeftPin) {
     leftPin.style.left = newX + 'px';
     rangeFillLine.style.left = newX + 'px';
-    rangePriceMin.textContent = calcPrice(newX, rangeControlWidth, 10000, isLeftPin);
+    rangePriceMin.textContent = calcPrice(newX, rangeControlWidth, maxPrice, isLeftPin);
   } else {
     rightPin.style.right = newX + 'px';
     rangeFillLine.style.right = newX + 'px';
-    rangePriceMax.textContent = calcPrice(newX, rangeControlWidth, 10000);
+    rangePriceMax.textContent = calcPrice(newX, rangeControlWidth, maxPrice);
   }
 };
 
@@ -746,22 +748,6 @@ rangeControlElement.addEventListener('mousedown', function (evt) {
   document.addEventListener('mouseup', fixRangeButton);
 });
 
-
-
-// var changeRangePrice = function (evt) {
-//   var target = evt.target;
-//   var targetClass = target.classList;
-
-//   if (!targetClass.contains('range__btn')) return;
-
-//   if (targetClass.contains('range__btn--left')) {
-//     rangePriceMin.textContent = Math.floor(((rangePosition.buttonMin - position.min) / (position.max - position.min)) * 1000);
-//   } else if (targetClass.contains('range__btn--right')) {
-//     rangePriceMax.textContent = Math.floor(((rangePosition.buttonMax - position.min) / (position.max - position.min)) * 10000);
-//   }
-
-//   target.blur();
-// };
 
 
 var submitButton = orderForm.querySelector('.buy__submit-btn');
