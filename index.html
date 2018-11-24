@@ -134,9 +134,9 @@
 
       <div class="catalog__cards-wrap">
         <div class="catalog__cards catalog__cards--load">
-          <p class="catalog__load">Данные загружаются...</p>
-        </div>
-
+          <div class="catalog__load">
+            <p class="catalog__load-text">Данные загружаются ...</p>
+          </div>
         <a class="catalog__btn-more visually-hidden" href="#">Покажи ещё 6</a>
       </div>
     </section>
@@ -471,7 +471,7 @@
   </template>
 
   <template id="load-data">
-    <p class="catalog__load">Данные загружаются...</p>
+    <p class="catalog__load">Данные загружаются ...</p>
   </template>
 
   <template id="empty-filters">
@@ -481,8 +481,8 @@
     </div>
   </template>
 
+  <script src="js/backend.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/data.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/basket.js"></script>
   <script src="js/tabs-manage.js"></script>

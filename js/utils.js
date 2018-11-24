@@ -9,27 +9,6 @@
     '9': 57
   };
 
-  var RATING_MAP = {
-    1: 'one',
-    2: 'two',
-    3: 'three',
-    4: 'four',
-    5: 'five'
-  };
-
-  var getRatingClassName = function (value) {
-    return 'stars__rating--' + RATING_MAP[value];
-  };
-
-  var generateRandomNumber = function (min, max) {
-    return Math.floor(Math.random() * (max + 1 - min)) + min;
-  };
-
-  var generateString = function (array) {
-    array.length = generateRandomNumber(3, array.length - 1);
-    return array.join(', ');
-  };
-
   var deepCopy = function (object) {
     var clone = Object.create(Object.getPrototypeOf(object));
     var properties = Object.getOwnPropertyNames(object);
@@ -59,9 +38,6 @@
 
   window.util = {
     KEYCODE: KEYCODE,
-    getRatingClassName: getRatingClassName,
-    generateRandomNumber: generateRandomNumber,
-    generateString: generateString,
     deepCopy: deepCopy,
     blockOrderFields: blockOrderFields
   };

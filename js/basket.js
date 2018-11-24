@@ -1,7 +1,8 @@
 'use strict';
 
 (function () {
-  var goodsInCatalog = window.data;
+    //!!!! Доработать показ ошибок на основе template #cards-empty
+
   var KEYCODE = window.util.KEYCODE;
   var deepCopy = window.util.deepCopy;
   var blockOrderFields = window.util.blockOrderFields;
@@ -31,20 +32,20 @@
     return word;
   };
 
-  var renderBasketCard = function (good) {
+  var renderBasketCard = function (good, id) {
     var basketCardElement = basketCardTemplate.cloneNode(true);
 
     basketCardElement.querySelector('.card-order__title').textContent = good.name;
-    basketCardElement.querySelector('.card-order__img').src = good.picture;
+    basketCardElement.querySelector('.card-order__img').src = 'img/cards/' + good.picture;
     basketCardElement.querySelector('.card-order__img').alt = good.name;
     basketCardElement.querySelector('.card-order__price').textContent = good.price + ' ₽';
 
-    basketCardElement.setAttribute('data-card-id', good.id);
-    basketCardElement.querySelector('.card-order__close').setAttribute('data-card-id', good.id);
-    basketCardElement.querySelector('.card-order__price').setAttribute('data-card-id', good.id);
-    basketCardElement.querySelector('.card-order__count').setAttribute('data-card-id', good.id);
-    basketCardElement.querySelector('.card-order__btn--decrease').setAttribute('data-card-id', good.id);
-    basketCardElement.querySelector('.card-order__btn--increase').setAttribute('data-card-id', good.id);
+    basketCardElement.setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__close').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__price').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__count').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__btn--decrease').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__btn--increase').setAttribute('data-card-id', id);
 
     return basketCardElement;
   };
@@ -95,8 +96,8 @@
     return catalogCardsListElement.querySelector('.' + className + '[data-card-id="' + id + '"]');
   };
 
-  var addBasketCard = function (good) {
-    basketCardsListElement.appendChild(renderBasketCard(good));
+  var addBasketCard = function (good, id) {
+    basketCardsListElement.appendChild(renderBasketCard(good, id));
   };
 
   var deleteBasketCard = function (id) {
@@ -227,7 +228,7 @@
 
     evt.preventDefault();
 
-    if (goodsInCatalog[id]['amount'] <= 0) {
+    if (window.goodsInCatalog[id]['amount'] <= 0) {
       return;
     }
 
@@ -244,8 +245,8 @@
       blockOrderFields(false);
     } else {
       hideTextBasket(true);
-      goodsInBasket[id] = cloneGood(goodsInCatalog[id]);
-      addBasketCard(goodsInBasket[id]);
+      goodsInBasket[id] = cloneGood(window.goodsInCatalog[id]);
+      addBasketCard(goodsInBasket[id], id);
       increaseGoodOrderedAmount(id);
       calcTotalBasketInfo();
       checkGoodAmount(id);
@@ -325,11 +326,11 @@
       return;
     }
 
-    if (Number(getBasketCardElement('card-order__count', id).value) > goodsInCatalog[id]['amount']) {
+    if (Number(getBasketCardElement('card-order__count', id).value) > window.goodsInCatalog[id]['amount']) {
       blockAddGoodButtonInBasket(id, true);
-      getBasketCardElement('card-order__count', id).setAttribute('value', goodsInCatalog[id]['amount']);
-      getBasketCardElement('card-order__count', id).value = goodsInCatalog[id]['amount'];
-      goodsInBasket[id]['orderedAmount'] = goodsInCatalog[id]['amount'];
+      getBasketCardElement('card-order__count', id).setAttribute('value', window.goodsInCatalog[id]['amount']);
+      getBasketCardElement('card-order__count', id).value = window.goodsInCatalog[id]['amount'];
+      goodsInBasket[id]['orderedAmount'] = window.goodsInCatalog[id]['amount'];
     } else if (Number(getBasketCardElement('card-order__count', id).value) < 0) {
       getBasketCardElement('card-order__count', id).setAttribute('value', 0);
       getBasketCardElement('card-order__count', id).value = 0;
@@ -341,7 +342,7 @@
       goodsInBasket[id]['orderedAmount'] = Number(getBasketCardElement('card-order__count', id).value);
     }
 
-    goodsInBasket[id]['amount'] = goodsInCatalog[id]['amount'] - goodsInBasket[id]['orderedAmount'];
+    goodsInBasket[id]['amount'] = window.goodsInCatalog[id]['amount'] - goodsInBasket[id]['orderedAmount'];
     getBasketCardElement('card-order__price', id).textContent = goodsInBasket[id]['price'] * goodsInBasket[id]['orderedAmount'] + ' ₽';
     calcTotalBasketInfo();
 

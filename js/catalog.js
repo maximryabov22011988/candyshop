@@ -1,33 +1,48 @@
 'use strict';
 
 (function () {
-  var goodsInCatalog = window.data;
+
+  //!!!! Доработать показ ошибок на основе template #load-data, показ по 6 элементов (кнопка "показать еще")
+
+  var backend = window.backend;
   var KEYCODE = window.util.KEYCODE;
   var blockOrderFields = window.util.blockOrderFields;
 
-  var fragment = document.createDocumentFragment();
-  var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
+  var RATING_MAP = {
+    1: 'one',
+    2: 'two',
+    3: 'three',
+    4: 'four',
+    5: 'five'
+  };
 
   var catalogCardsListElement = document.querySelector('.catalog__cards');
   catalogCardsListElement.classList.remove('catalog__cards--load');
 
   var loaderElement = catalogCardsListElement.querySelector('.catalog__load');
-  loaderElement.classList.add('visually-hidden');
+  var loadMessage = catalogCardsListElement.querySelector('.catalog__load-text');
 
+  var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
 
-  var renderCatalogCard = function (good) {
+  var getRatingClassName = function (value) {
+    return 'stars__rating--' + RATING_MAP[value];
+  };
+
+  var renderCatalogCard = function (good, id, className) {
     var catalogCardElement = catalogCardTemplate.cloneNode(true);
 
+    catalogCardElement.classList.remove('card--in-stock');
+    catalogCardElement.classList.add(className);
     catalogCardElement.querySelector('.card__title').textContent = good.name;
-    catalogCardElement.querySelector('.card__img').src = good.picture;
+    catalogCardElement.querySelector('.card__img').src = 'img/cards/' + good.picture;
     catalogCardElement.querySelector('.card__img').alt = good.name;
     catalogCardElement.querySelector('.card__price').firstChild.textContent = good.price;
     catalogCardElement.querySelector('.card__weight').textContent = '/ ' + good.weight + ' Г';
-    catalogCardElement.querySelector('.stars__rating').classList.add(window.util.getRatingClassName(good.rating.value));
+    catalogCardElement.querySelector('.stars__rating').classList.add(getRatingClassName(good.rating.value));
     catalogCardElement.querySelector('.star__count').textContent = good.rating.number;
-    catalogCardElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar ? 'Содержит сахар' : 'Без сахара';
-    catalogCardElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.ingredients;
-    catalogCardElement.querySelector('.card__btn').setAttribute('data-card-id', good.id);
+    catalogCardElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar;
+    catalogCardElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.contents;
+    catalogCardElement.querySelector('.card__btn').setAttribute('data-card-id', id);
 
     if (good.amount === 0) {
       catalogCardElement.querySelector('.card__btn').classList.add('card__btn--disabled');
@@ -36,20 +51,36 @@
     return catalogCardElement;
   };
 
-  goodsInCatalog.forEach(function (good) {
-    if (goodsInCatalog.length > 5) {
-      catalogCardTemplate.classList.add('card--in-stock');
-    } else if (goodsInCatalog.length >= 1 && goodsInCatalog.length <= 5) {
-      catalogCardTemplate.classList.add('card--little');
-    } else {
-      catalogCardTemplate.classList.add('card--soon');
+  var successHandler = function (goods) {
+    window.goodsInCatalog = goods;
+
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < goods.length; i++) {
+      var goodClass = 'card--soon';
+
+      if (goods.length > 5) {
+        goodClass = 'card--in-stock';
+      } else if (goods.length >= 1 && goods.length <= 5) {
+        goodClass = 'card--little';
+      }
+
+      fragment.appendChild(renderCatalogCard(goods[i], i, goodClass));
     }
 
-    fragment.appendChild(renderCatalogCard(good));
-  });
+    loaderElement.style.display = 'none';
+    catalogCardsListElement.appendChild(fragment);
+  };
 
-  catalogCardsListElement.appendChild(fragment);
+  var errorHandler = function (errorMessage) {
+    var preloaderElement = document.querySelector('.holder');
+    preloaderElement.classList.add('visually-hidden');
 
+    loadMessage.style.marginTop = '0';
+    loadMessage.textContent = errorMessage;
+  };
+
+  backend.load(successHandler, errorHandler);
   blockOrderFields(true);
 
   var addCardToFavorites = function (evt) {
