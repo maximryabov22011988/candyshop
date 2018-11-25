@@ -30,6 +30,16 @@
     return httpRequest;
   };
 
+  var showErrorModal = function (message) {
+    var modal = document.querySelector('.modal[data-modal="error"]');
+    modal.classList.remove('modal--hidden');
+
+    if (message) {
+      var messageElement = modal.querySelector('.modal__message');
+      messageElement.textContent = message;
+    }
+  };
+
   var load = function (onLoad, onError) {
     var xhr = createRequest();
     xhr.responseType = 'json';
@@ -41,39 +51,44 @@
     }
 
     xhr.addEventListener('load', function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          onLoad(xhr.response);
-        } else {
-          var errorMessage;
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        onLoad(xhr.response);
+      } else {
+        var errorMessage;
 
-          switch (xhr.status) {
-            case 400:
-              errorMessage = 'Неверный запрос';
-              break;
-            case 401:
-              errorMessage = 'Пользователь не авторизован';
-              break;
-            case 404:
-              errorMessage = 'Запрашиваемая информация не найдена';
-              break;
-            default:
-              errorMessage = 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText;
-          }
-          onError(errorMessage);
+        switch (xhr.status) {
+          case 400:
+            errorMessage = 'Неверный запрос';
+            showErrorModal('Код ошибки: 400.');
+            break;
+          case 401:
+            errorMessage = 'Пользователь не авторизован';
+            showErrorModal('Код ошибки: 401.');
+            break;
+          case 404:
+            errorMessage = 'Запрашиваемая информация не найдена';
+            showErrorModal('Код ошибки: 404.');
+            break;
+          default:
+            errorMessage = 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText;
         }
+        onError(errorMessage);
       }
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      var message = 'Произошла ошибка соединения';
+      showErrorModal(message);
+      onError(message);
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + (xhr.timeout / 1000) + ' с');
+      var message = 'Запрос не успел выполниться за ' + (xhr.timeout / 1000) + ' с';
+      showErrorModal(message);
+      onError(message);
     });
 
-    xhr.timeout = 15000;
+    xhr.timeout = 10000;
 
     xhr.open('GET', URL.LOAD);
     xhr.send();

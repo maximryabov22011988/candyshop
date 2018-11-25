@@ -2,7 +2,7 @@
 
 (function () {
 
-  //!!!!показываем модальное окно при 404 (modal 395 строчка)
+  //!!!! доработать модуль modal.js
 
   var backend = window.backend;
   var KEYCODE = window.util.KEYCODE;
@@ -49,10 +49,14 @@
 
   var startIndex = 0;
 
-  var insertCatalogCard = function (goods) {
+  var insertCatalogCard = function (goods, amount) {
+    if (startIndex >= goods.length) {
+      return;
+    }
+
     var fragment = document.createDocumentFragment();
 
-    for (var i = startIndex; i < startIndex + 6; i++) {
+    for (var i = startIndex; i < startIndex + amount; i++) {
       var goodClass = 'card--soon';
 
       if (goods.length > 5) {
@@ -65,7 +69,7 @@
     }
 
     catalogCardsListElement.insertBefore(fragment, moreGoodsButton);
-    startIndex += 6;
+    startIndex += amount;
   };
 
   var successHandler = function (goods) {
@@ -75,24 +79,16 @@
 
     catalogCardsListElement.classList.remove('catalog__cards--load');
 
-    if (document.querySelectorAll('.catalog__card').length === goods.length) {
-      moreGoodsButton.classList.add('visually-hidden');
-      return;
-    }
-
-    insertCatalogCard(goods);
+    insertCatalogCard(goods, 6);
     moreGoodsButton.classList.remove('visually-hidden');
 
     window.goodsInCatalog = goods;
   };
 
   var errorHandler = function (errorMessage) {
-    var preloaderElement = document.querySelector('.holder');
-    preloaderElement.classList.add('visually-hidden');
-
-    var loadMessage = catalogCardsListElement.querySelector('.catalog__load-text');
-    loadMessage.style.marginTop = '0';
-    loadMessage.textContent = errorMessage;
+    var loaderElement = document.querySelector('.catalog__load');
+    loaderElement.style.display = 'none';
+    throw new Error(errorMessage);
   };
 
   window.loader.renderEmptyBasket();
@@ -112,6 +108,17 @@
     target.blur();
   };
 
+  var showMoreCatalogCard = function (evt) {
+    evt.preventDefault();
+    insertCatalogCard(goodsInCatalog, 6);
+
+    if (document.querySelectorAll('.catalog__card').length === goodsInCatalog.length) {
+      moreGoodsButton.classList.add('visually-hidden');
+    }
+
+    evt.target.blur();
+  };
+
   catalogCardsListElement.addEventListener('click', function (evt) {
     addCardToFavorites(evt);
   });
@@ -123,7 +130,12 @@
   });
 
   moreGoodsButton.addEventListener('click', function (evt) {
-    evt.preventDefault();
-    backend.load(successHandler, errorHandler);
+    showMoreCatalogCard(evt);
+  });
+
+  moreGoodsButton.addEventListener('keydown', function (evt) {
+    if (evt.which === KEYCODE['ENTER']) {
+      showMoreCatalogCard(evt);
+    }
   });
 })();

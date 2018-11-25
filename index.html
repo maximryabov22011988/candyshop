@@ -392,16 +392,16 @@
     </div>
   </footer>
 
-  <section class="modal modal--hidden">
+  <section class="modal modal--hidden" data-modal="error">
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Произошла ошибка!</h3>
-      <p class="modal__message">Код ошибки: 404.</p>
+      <p class="modal__message"></p>
       <p class="modal__message">Пожалуйста, перезагрузите страницу.</p>
     </div>
   </section>
 
-  <section class="modal modal--hidden">
+  <section class="modal modal--hidden" data-modal="success">
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Данные успешно отправлены!</h3>
@@ -478,6 +478,7 @@
 
   <script src="js/backend.js"></script>
   <script src="js/loaders.js"></script>
+  <script src="js/modal.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/basket.js"></script>
