@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-    //!!!! Доработать показ ошибок на основе template #cards-empty
-
   var KEYCODE = window.util.KEYCODE;
   var deepCopy = window.util.deepCopy;
   var blockOrderFields = window.util.blockOrderFields;
@@ -11,8 +9,6 @@
 
   var catalogCardsListElement = document.querySelector('.catalog__cards');
   var basketCardsListElement = document.querySelector('.goods__cards');
-  basketCardsListElement.classList.remove('goods__cards--empty');
-  var emptyBasketElement = document.querySelector('.goods__card-empty');
 
   var basketCardTemplate = document.querySelector('#card-order').content.querySelector('.goods_card');
 
@@ -115,13 +111,11 @@
     }
   };
 
-  var hideTextBasket = function (hide) {
-    if (emptyBasketElement.classList.contains('visually-hidden')) {
-      emptyBasketElement.classList.remove('visually-hidden');
-    }
-
-    if (hide) {
-      emptyBasketElement.classList.add('visually-hidden');
+  var isEmptyBasket = function (isEmpty) {
+    if (isEmpty) {
+      basketCardsListElement.classList.add('goods__cards--empty');
+    } else {
+      basketCardsListElement.classList.remove('goods__cards--empty');
     }
   };
 
@@ -244,7 +238,7 @@
       checkGoodAmount(id);
       blockOrderFields(false);
     } else {
-      hideTextBasket(true);
+      isEmptyBasket(false);
       goodsInBasket[id] = cloneGood(window.goodsInCatalog[id]);
       addBasketCard(goodsInBasket[id], id);
       increaseGoodOrderedAmount(id);
@@ -268,7 +262,7 @@
       deleteBasketCard(id);
       calcTotalBasketInfo();
       if (getGoodAmountInBasket() < 1) {
-        hideTextBasket(false);
+        isEmptyBasket(true);
         blockOrderFields(true);
       }
     } else if (classNames.contains('card-order__btn--increase')) {
@@ -278,7 +272,7 @@
       decreaseGoodOrderedAmount(id);
       calcGoodPrice(id);
       if (getGoodAmountInBasket() < 1) {
-        hideTextBasket(false);
+        isEmptyBasket(true);
         blockOrderFields(true);
       }
     }
@@ -351,7 +345,7 @@
         deleteBasketCard(id);
 
         if (getGoodAmountInBasket() < 1) {
-          hideTextBasket(false);
+          isEmptyBasket(true);
           calcTotalBasketInfo();
           blockOrderFields(true);
         }

@@ -2,7 +2,7 @@
 
 (function () {
 
-  //!!!! Доработать показ ошибок на основе template #load-data, показ по 6 элементов (кнопка "показать еще")
+  //!!!!показываем модальное окно при 404 (modal 395 строчка)
 
   var backend = window.backend;
   var KEYCODE = window.util.KEYCODE;
@@ -17,12 +17,8 @@
   };
 
   var catalogCardsListElement = document.querySelector('.catalog__cards');
-  catalogCardsListElement.classList.remove('catalog__cards--load');
-
-  var loaderElement = catalogCardsListElement.querySelector('.catalog__load');
-  var loadMessage = catalogCardsListElement.querySelector('.catalog__load-text');
-
   var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
+  var moreGoodsButton = document.querySelector('.catalog__btn-more');
 
   var getRatingClassName = function (value) {
     return 'stars__rating--' + RATING_MAP[value];
@@ -51,12 +47,12 @@
     return catalogCardElement;
   };
 
-  var successHandler = function (goods) {
-    window.goodsInCatalog = goods;
+  var startIndex = 0;
 
+  var insertCatalogCard = function (goods) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < goods.length; i++) {
+    for (var i = startIndex; i < startIndex + 6; i++) {
       var goodClass = 'card--soon';
 
       if (goods.length > 5) {
@@ -68,18 +64,38 @@
       fragment.appendChild(renderCatalogCard(goods[i], i, goodClass));
     }
 
-    loaderElement.style.display = 'none';
-    catalogCardsListElement.appendChild(fragment);
+    catalogCardsListElement.insertBefore(fragment, moreGoodsButton);
+    startIndex += 6;
+  };
+
+  var successHandler = function (goods) {
+    goods = goods.filter(function (good) {
+      return good.price > 0;
+    });
+
+    catalogCardsListElement.classList.remove('catalog__cards--load');
+
+    if (document.querySelectorAll('.catalog__card').length === goods.length) {
+      moreGoodsButton.classList.add('visually-hidden');
+      return;
+    }
+
+    insertCatalogCard(goods);
+    moreGoodsButton.classList.remove('visually-hidden');
+
+    window.goodsInCatalog = goods;
   };
 
   var errorHandler = function (errorMessage) {
     var preloaderElement = document.querySelector('.holder');
     preloaderElement.classList.add('visually-hidden');
 
+    var loadMessage = catalogCardsListElement.querySelector('.catalog__load-text');
     loadMessage.style.marginTop = '0';
     loadMessage.textContent = errorMessage;
   };
 
+  window.loader.renderEmptyBasket();
   backend.load(successHandler, errorHandler);
   blockOrderFields(true);
 
@@ -104,5 +120,10 @@
     if (evt.which === KEYCODE['ENTER']) {
       addCardToFavorites(evt);
     }
+  });
+
+  moreGoodsButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    backend.load(successHandler, errorHandler);
   });
 })();

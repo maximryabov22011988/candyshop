@@ -6,22 +6,6 @@
     UPLOAD: 'https://js.dump.academy/candyshop'
   };
 
-  var createPreloader = function () {
-    var holder = document.createElement('div');
-    holder.classList.add('holder');
-
-    var preloader = document.createElement('div');
-    preloader.classList.add('preloader');
-
-    for (var i = 0; i < 10; i++) {
-      var div = document.createElement('div');
-      preloader.appendChild(div);
-    }
-
-    holder.appendChild(preloader);
-    document.querySelector('.catalog__load').appendChild(holder);
-  };
-
   var createRequest = function () {
     var httpRequest = false;
 
@@ -43,14 +27,18 @@
       throw new Error('Невозможно создать XMLHttpRequest');
     }
 
-    createPreloader();
-
     return httpRequest;
   };
 
   var load = function (onLoad, onError) {
     var xhr = createRequest();
     xhr.responseType = 'json';
+
+    if (!document.querySelector('.catalog__load')) {
+      window.loader.renderCatalogLoader();
+    } else {
+      document.querySelector('.catalog__cards').classList.add('catalog__cards--load');
+    }
 
     xhr.addEventListener('load', function () {
       if (xhr.readyState === 4) {
@@ -74,8 +62,6 @@
           }
           onError(errorMessage);
         }
-      } else {
-        document.querySelector('.holder').classList.remove('visually-hidden');
       }
     });
 
@@ -87,7 +73,7 @@
       onError('Запрос не успел выполниться за ' + (xhr.timeout / 1000) + ' с');
     });
 
-    xhr.timeout = 10000;
+    xhr.timeout = 15000;
 
     xhr.open('GET', URL.LOAD);
     xhr.send();

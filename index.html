@@ -134,10 +134,8 @@
 
       <div class="catalog__cards-wrap">
         <div class="catalog__cards catalog__cards--load">
-          <div class="catalog__load">
-            <p class="catalog__load-text">Данные загружаются ...</p>
-          </div>
-        <a class="catalog__btn-more visually-hidden" href="#">Покажи ещё 6</a>
+          <a class="catalog__btn-more visually-hidden" href="#">Покажи ещё 6</a>
+        </div>
       </div>
     </section>
 
@@ -150,12 +148,7 @@
             <h2 class="group-title goods__title" id="basket">Твои покупки</h2>
             <div class="goods__card-wrap">
 
-              <div class="goods__cards goods__cards--empty">
-                <div class="goods__card-empty">
-                  <p><b>Странно, ты ещё ничего не добавил.</b></p>
-                  <p>У нас столько всего вкусного и необычного, обязательно попробуй.</p>
-                </div>
-              </div>
+              <div class="goods__cards goods__cards--empty"></div>
               <div class="goods__total visually-hidden">
                 <p class="goods__total-count">Итого за 0 товаров: <span class="goods__price">0 ₽</span></p>
                 <a href="#order" class="goods__order-link goods__order-link--disabled">Оформляем</a>
@@ -471,7 +464,9 @@
   </template>
 
   <template id="load-data">
-    <p class="catalog__load">Данные загружаются ...</p>
+    <div class="catalog__load">
+      <p class="catalog__load-text">Данные загружаются ...</p>
+    </div>
   </template>
 
   <template id="empty-filters">
@@ -482,6 +477,7 @@
   </template>
 
   <script src="js/backend.js"></script>
+  <script src="js/loaders.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/basket.js"></script>

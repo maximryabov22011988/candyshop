@@ -360,7 +360,8 @@ body {
   margin-bottom: 31px;
 }
 .catalog__btn-more {
-  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
   padding: 10px 29px;
   border: 2px solid #e8e8e8;
   border-radius: 20px;
@@ -388,10 +389,19 @@ body {
 }
 
 .catalog__load {
+  display: none;
   position: relative;
   margin-left: auto;
   margin-right: auto;
   font-weight: bold;
+}
+
+.catalog__cards--load .catalog__load {
+  display: block;
+}
+
+.catalog__cards--load .catalog__btn-more {
+  display: none;
 }
 
 .catalog__load-text {
@@ -691,6 +701,12 @@ body {
   display: flex;
   flex-wrap: wrap;
   padding-bottom: 41px;
+}
+.goods__card-empty {
+  display: none;
+}
+.goods__cards--empty .goods__card-empty {
+  display: block;
 }
 .goods_card {
   margin-right: 20px;
