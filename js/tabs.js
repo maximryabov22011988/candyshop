@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var KEYCODE = window.util.KEYCODE;
+  var isEnterEvent = window.util.isEnterEvent;
 
   var orderForm = document.querySelector('.buy form');
 
@@ -55,8 +55,6 @@
   });
 
   orderForm.addEventListener('keydown', function (evt) {
-    if (evt.which === KEYCODE['ENTER']) {
-      toggleTab(evt);
-    }
+    isEnterEvent(evt, toggleTab);
   });
 })();

@@ -1401,7 +1401,7 @@ body {
   width: 400px;
   margin-left: -200px;
   top: 300px;
-  z-index: 500;
+  z-index: 550;
   background-color: #ffffff;
   padding-bottom: 15px;
   border-radius: 6px;

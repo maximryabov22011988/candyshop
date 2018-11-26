@@ -10,6 +10,12 @@
 
   var submitButton = orderForm.querySelector('.buy__submit-btn');
 
+  var blockFields = function (boolean) {
+    for (var i = 0; i < orderFormFields.length; i++) {
+      orderFormFields[i].disabled = boolean;
+    }
+  };
+
   var customValidation = {
     'card-number': {
       messages: {
@@ -251,4 +257,8 @@
   orderForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
   });
+
+  window.order = {
+    blockFields: blockFields
+  };
 })();

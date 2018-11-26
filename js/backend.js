@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var showErrorModal = window.modal.showErrorModal;
+  var renderCatalogLoader = window.loader.renderCatalogLoader;
+
   var URL = {
     LOAD: 'https://js.dump.academy/candyshop/data',
     UPLOAD: 'https://js.dump.academy/candyshop'
@@ -30,22 +33,12 @@
     return httpRequest;
   };
 
-  var showErrorModal = function (message) {
-    var modal = document.querySelector('.modal[data-modal="error"]');
-    modal.classList.remove('modal--hidden');
-
-    if (message) {
-      var messageElement = modal.querySelector('.modal__message');
-      messageElement.textContent = message;
-    }
-  };
-
   var load = function (onLoad, onError) {
     var xhr = createRequest();
     xhr.responseType = 'json';
 
     if (!document.querySelector('.catalog__load')) {
-      window.loader.renderCatalogLoader();
+      renderCatalogLoader();
     } else {
       document.querySelector('.catalog__cards').classList.add('catalog__cards--load');
     }
@@ -72,6 +65,7 @@
           default:
             errorMessage = 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText;
         }
+
         onError(errorMessage);
       }
     });
@@ -88,7 +82,7 @@
       onError(message);
     });
 
-    xhr.timeout = 10000;
+    xhr.timeout = 100000;
 
     xhr.open('GET', URL.LOAD);
     xhr.send();

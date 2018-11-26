@@ -2,8 +2,9 @@
 
 (function () {
   var KEYCODE = window.util.KEYCODE;
+  var isEnterEvent = window.util.isEnterEvent;
   var deepCopy = window.util.deepCopy;
-  var blockOrderFields = window.util.blockOrderFields;
+  var blockFields = window.order.blockFields;
 
   var goodsInBasket = {};
 
@@ -236,7 +237,7 @@
       calcGoodPrice(id);
       calcTotalBasketInfo();
       checkGoodAmount(id);
-      blockOrderFields(false);
+      blockFields(false);
     } else {
       isEmptyBasket(false);
       goodsInBasket[id] = cloneGood(window.goodsInCatalog[id]);
@@ -244,7 +245,7 @@
       increaseGoodOrderedAmount(id);
       calcTotalBasketInfo();
       checkGoodAmount(id);
-      blockOrderFields(false);
+      blockFields(false);
     }
 
     target.blur();
@@ -263,7 +264,7 @@
       calcTotalBasketInfo();
       if (getGoodAmountInBasket() < 1) {
         isEmptyBasket(true);
-        blockOrderFields(true);
+        blockFields(true);
       }
     } else if (classNames.contains('card-order__btn--increase')) {
       increaseGoodOrderedAmount(id);
@@ -273,7 +274,7 @@
       calcGoodPrice(id);
       if (getGoodAmountInBasket() < 1) {
         isEmptyBasket(true);
-        blockOrderFields(true);
+        blockFields(true);
       }
     }
   };
@@ -283,9 +284,7 @@
   });
 
   catalogCardsListElement.addEventListener('keydown', function (evt) {
-    if (evt.which === KEYCODE['ENTER']) {
-      addGoodToBasket(evt);
-    }
+    isEnterEvent(evt, addGoodToBasket);
   });
 
   basketCardsListElement.addEventListener('click', function (evt) {
@@ -293,9 +292,7 @@
   });
 
   basketCardsListElement.addEventListener('keydown', function (evt) {
-    if (evt.which === KEYCODE['ENTER']) {
-      manageGoodOrderedAmountInBasket(evt);
-    }
+    isEnterEvent(evt, manageGoodOrderedAmountInBasket);
   });
 
   basketCardsListElement.addEventListener('keydown', function (evt) {
@@ -304,7 +301,8 @@
 
     if (!classNames.contains('card-order__count') ||
         evt.which >= KEYCODE['0'] && evt.which <= KEYCODE['9'] ||
-        evt.which === KEYCODE['BACKSPACE']) {
+        evt.which === KEYCODE['BACKSPACE'] ||
+        evt.which === KEYCODE['TAB']) {
       return;
     }
 
@@ -347,7 +345,7 @@
         if (getGoodAmountInBasket() < 1) {
           isEmptyBasket(true);
           calcTotalBasketInfo();
-          blockOrderFields(true);
+          blockFields(true);
         }
       }, 10000);
     }

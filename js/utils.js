@@ -3,7 +3,9 @@
 (function () {
   var KEYCODE = {
     'LEFT_MOUSE_BUTTON': 1,
+    'TAB': 9,
     'ENTER': 13,
+    'ESC': 27,
     'BACKSPACE': 8,
     '0': 48,
     '9': 57
@@ -27,18 +29,22 @@
     return clone;
   };
 
-  var blockOrderFields = function (boolean) {
-    var orderForm = document.querySelector('.buy form');
-    var fields = orderForm.querySelectorAll('input');
+  var isEnterEvent = function (evt, action) {
+    if (evt.which === KEYCODE['ENTER']) {
+      action(evt);
+    }
+  };
 
-    for (var i = 0; i < fields.length; i++) {
-      fields[i].disabled = boolean;
+  var isEscEvent = function (evt, action) {
+    if (evt.which === KEYCODE['ESC']) {
+      action(evt);
     }
   };
 
   window.util = {
     KEYCODE: KEYCODE,
     deepCopy: deepCopy,
-    blockOrderFields: blockOrderFields
+    isEnterEvent: isEnterEvent,
+    isEscEvent: isEscEvent
   };
 })();

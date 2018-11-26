@@ -1,12 +1,10 @@
 'use strict';
 
 (function () {
-
-  //!!!! доработать модуль modal.js
-
   var backend = window.backend;
-  var KEYCODE = window.util.KEYCODE;
-  var blockOrderFields = window.util.blockOrderFields;
+  var isEnterEvent = window.util.isEnterEvent;
+  var renderEmptyBasket = window.loader.renderEmptyBasket;
+  var blockFields = window.order.blockFields;
 
   var RATING_MAP = {
     1: 'one',
@@ -91,9 +89,9 @@
     throw new Error(errorMessage);
   };
 
-  window.loader.renderEmptyBasket();
+  renderEmptyBasket();
   backend.load(successHandler, errorHandler);
-  blockOrderFields(true);
+  blockFields(true);
 
   var addCardToFavorites = function (evt) {
     var target = evt.target;
@@ -124,9 +122,7 @@
   });
 
   catalogCardsListElement.addEventListener('keydown', function (evt) {
-    if (evt.which === KEYCODE['ENTER']) {
-      addCardToFavorites(evt);
-    }
+    isEnterEvent(evt, addCardToFavorites);
   });
 
   moreGoodsButton.addEventListener('click', function (evt) {
@@ -134,8 +130,6 @@
   });
 
   moreGoodsButton.addEventListener('keydown', function (evt) {
-    if (evt.which === KEYCODE['ENTER']) {
-      showMoreCatalogCard(evt);
-    }
+    isEnterEvent(evt, showMoreCatalogCard);
   });
 })();
