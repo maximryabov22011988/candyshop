@@ -159,12 +159,20 @@ body {
   font-size: 21px;
   outline: none;
 }
+.text-input__input[name="deliver-floor"] {
+  padding-left: 0;
+  text-align: center;
+}
 .text-input__label {
   color: #828282;
   font-size: 0;
   position: absolute;
   left: 5px;
   top: -20px;
+}
+
+  left: 10px;
+  width: 120px;
 }
 .text-input__input:hover {
   border-color: #6e58d9;
@@ -1182,9 +1190,12 @@ body {
   left: 13px;
 }
 
-#payment__card-date:focus + .text-input__label,
 #payment__card-cvc:focus + .text-input__label {
-  left: 44px;
+  left: 5px;
+}
+
+#payment__card-date:focus + .text-input__label {
+  left: 6px;
 }
 
 .text-input__input--error {
@@ -1414,6 +1425,9 @@ body {
   color: #ffffff;
   background-color: #ff481c;
   border-radius: 6px 6px 0 0;
+}
+.modal[data-modal="success"] .modal__title {
+  background-color: #6e58d9;
 }
 .modal__close {
   font-size: 0;

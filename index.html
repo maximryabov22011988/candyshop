@@ -142,7 +142,7 @@
     <section class="buy">
       <h2 class="visually-hidden">Оформление покупки</h2>
 
-      <form action="/" method="POST" novalidate="true">
+      <form class="buy__form" action="/" method="POST" type="multipart/form-data" novalidate="true">
         <section class="goods">
           <div class="goods__wrap container">
             <h2 class="group-title goods__title" id="basket">Твои покупки</h2>
@@ -168,18 +168,18 @@
 
               <ul class="contact-data__inputs">
                 <li class="text-input contact-data__input-wrap">
-                  <input type="text" class="text-input__input" name="name" id="contact-data__name" maxlength="120" placeholder="Имя" required>
-                  <label for="contact-data__name" class="text-input__label">Ваше имя</label>
+                  <input type="text" class="text-input__input" name="name" id="contact-data__name" maxlength="120" pattern="[A-zА-яЁё\s]{2,}" placeholder="Имя" required>
+                  <label for="contact-data__name" class="text-input__label">Пример: Пётр</label>
                 </li>
 
                 <li class="text-input contact-data__input-wrap">
-                  <input type="text" class="text-input__input" name="tel" id="contact-data__tel" minlength="12" maxlength="18" placeholder="Телефон" required>
-                  <label for="contact-data__tel" class="text-input__label">+7 (000) 000 00 00</label>
+                  <input type="text" class="text-input__input" name="tel" id="contact-data__tel" minlength="18" maxlength="18" pattern="[+]{1}[7][\s]{1}\([0-9]{3}\)[\s]{1}[0-9]{3}-[0-9]{2}-[0-9]{2}" placeholder="Телефон" required>
+                  <label for="contact-data__tel" class="text-input__label">Пример: +7 (000) 000-00-00</label>
                 </li>
 
                 <li class="text-input contact-data__input-wrap">
-                  <input type="email" class="text-input__input" name="email" id="contact-data__email" maxlength="30" placeholder="Почта">
-                  <label for="contact-data__email" class="text-input__label">vashapochta@domain.ru</label>
+                  <input type="email" class="text-input__input" name="email" id="contact-data__email" maxlength="30" pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" placeholder="Почта">
+                  <label for="contact-data__email" class="text-input__label">Пример: vashapochta@domain.ru</label>
                 </li>
 
               </ul>
@@ -208,24 +208,24 @@
                   <div class="payment__card-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-number">
                       <input type="text" class="text-input__input" name="card-number" id="payment__card-number" minlength="19" maxlength="19" pattern="[0-9]{4}\s[0-9]{4}\s[0-9]{4}\s[0-9]{4}" placeholder="Номер карты" required>
-                      <label class="text-input__label" for="payment__card-number">Номер карты</label>
+                      <label class="text-input__label" for="payment__card-number">Пример: 5213 2437 5579 2908</label>
                     </p>
 
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-date">
                       <input type="text" class="text-input__input" name="card-date" id="payment__card-date" minlength="5" maxlength="5" pattern="^[0-9]{2}[/]{1}[0-9]{2}$" placeholder="мм/гг" required>
-                      <label class="text-input__label" for="payment__card-date">Срок</label>
+                      <label class="text-input__label" for="payment__card-date">Пример: 12/20</label>
                     </p>
 
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--cvc">
                       <input type="text" class="text-input__input" name="card-cvc" id="payment__card-cvc" minlength="3" maxlength="3" pattern="[0-9]{3}" placeholder="CVC" required>
-                      <label class="text-input__label text-input__label--lock" for="payment__card-cvc">CVC</label>
+                      <label class="text-input__label text-input__label--lock" for="payment__card-cvc">Пример: 255</label>
                     </p>
 
                   </div>
                   <div class="payment__cardholder-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--cardholder">
-                      <input type="text" class="text-input__input" name="cardholder" id="payment__cardholder" maxlength="100" placeholder="ИМЯ ДЕРЖАТЕЛЯ" required>
-                      <label class="text-input__label" for="payment__cardholder">IVAN PETROV</label>
+                      <input type="text" class="text-input__input" name="cardholder" id="payment__cardholder" maxlength="100" pattern="[A-Z]{1,}[\s][A-Z]{1,}" placeholder="ИМЯ ДЕРЖАТЕЛЯ" required>
+                      <label class="text-input__label" for="payment__cardholder">Пример: IVAN PETROV</label>
                     </p>
                     <div class="payment__card-status-wrap">
                       <p class="payment__card-status-message">Статус карты: <span class="payment__card-status">Не определён</span></p>
@@ -252,13 +252,13 @@
             <h3 class="deliver__title">А что с доставкой?</h3>
 
             <p class="deliver__toggle toggle-btn">
-              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="store" id="deliver__store" checked>
+              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="store" id="deliver__store">
               <label for="deliver__store" class="toggle-btn__label" tabindex="0">Заеду</label>
-              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="courier" id="deliver__courier">
+              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="courier" id="deliver__courier" checked>
               <label for="deliver__courier" class="toggle-btn__label" tabindex="0">Хочу курьером</label>
             </p>
 
-            <div class="deliver__store">
+            <div class="deliver__store visually-hidden">
               <fieldset class="deliver__stores">
                 <legend class="deliver__store-title">Выберите удобное метро</legend>
 
@@ -322,34 +322,34 @@
               </div>
             </div>
 
-            <div class="deliver__courier visually-hidden">
+            <div class="deliver__courier">
               <fieldset class="deliver__entry-fields-wrap">
                 <legend class="deliver__courier-title">Куда завозить?</legend>
 
                 <ul class="deliver__address-entry-fields">
                   <li class="text-input deliver__street">
-                    <input type="text" class="text-input__input" name="deliver-street" id="deliver__street" maxlength="40" placeholder="Улица" required>
-                    <label class="text-input__label" for="deliver__street">Улица</label>
+                    <input type="text" class="text-input__input" name="deliver-street" id="deliver__street" maxlength="120" pattern="[А-я\\d\\s\\-\\.\\,]*[А-я][А-я\\d\\s]*" placeholder="Улица" required>
+                    <label class="text-input__label" for="deliver__street">Название улицы (на русском)</label>
                   </li>
 
                   <li class="text-input deliver__house">
-                    <input type="text" class="text-input__input" name="deliver-house" id="deliver__house" maxlength="20" placeholder="Дом" required>
+                    <input type="text" class="text-input__input" name="deliver-house" id="deliver__house" maxlength="20" pattern="[\d]{1,}[/\-/g/А-я/g/\d/g/\s/g]*" placeholder="Дом" required>
                     <label class="text-input__label" for="deliver__house">Дом</label>
                   </li>
 
                   <li class="text-input deliver__floor">
-                    <input type="text" class="text-input__input" name="deliver-floor" id="deliver__floor" maxlength="2" placeholder="Эт.">
+                    <input type="text" class="text-input__input" name="deliver-floor" id="deliver__floor" maxlength="3" placeholder="Эт.">
                     <label class="text-input__label" for="deliver__floor">Эт.</label>
                   </li>
 
                   <li class="text-input deliver__room">
-                    <input type="text" class="text-input__input" name="deliver-room" id="deliver__room" maxlength="3" placeholder="Кв." required>
+                    <input type="text" class="text-input__input" name="deliver-room" id="deliver__room" maxlength="4" placeholder="Кв." required>
                     <label class="text-input__label" for="deliver__room">Кв.</label>
                   </li>
                 </ul>
                 <label>
                   <span class="visually-hidden">Описание доставки</span>
-                  <textarea name="deliver-description" class="deliver__textarea" placeholder="Здесь можешь добавить любые доставки — в какое время готов встретить; как быстрее к тебе добраться; кодовое слово для консьержки... Любая уточняющая информация будет очень кстати."></textarea>
+                  <textarea name="deliver-description" class="deliver__textarea" placeholder="Комментарии к заказу"></textarea>
                 </label>
               </fieldset>
             </div>
@@ -405,6 +405,7 @@
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Данные успешно отправлены!</h3>
+      <p class="modal__message">В ближайшее время мы свяжемся с Вами :)</p>
     </div>
   </section>
 
@@ -475,13 +476,18 @@
       <p>Попробуй ещё раз, нажав <span class="catalog__show-all">«Показать всё»</span> или посмотри что мы предлагаем тебе попробовать.</p>
     </div>
   </template>
-
+  <script src="https://unpkg.com/imask"></script>
+  <script src="js/mask.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/loaders.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/tabs.js"></script>
-  <script src="js/order.js"></script>
   <script src="js/backend.js"></script>
+  <script src="js/validate.js"></script>
+  <script src="js/order.js"></script>
+  <script src="js/contacts.js"></script>
+  <script src="js/payment.js"></script>
+  <script src="js/delivery.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/basket.js"></script>
   <script src="js/filter.js"></script>

@@ -5,8 +5,8 @@
   var renderCatalogLoader = window.loader.renderCatalogLoader;
 
   var URL = {
-    LOAD: 'https://js.dump.academy/candyshop/data',
-    UPLOAD: 'https://js.dump.academy/candyshop'
+    GET: 'https://js.dump.academy/candyshop/data',
+    POST: 'https://js.dump.academy/candyshop'
   };
 
   var createRequest = function () {
@@ -33,39 +33,42 @@
     return httpRequest;
   };
 
-  var load = function (onLoad, onError) {
+  var createXhr = function (onLoad, onError, isGet) {
     var xhr = createRequest();
     xhr.responseType = 'json';
 
-    if (!document.querySelector('.catalog__load')) {
-      renderCatalogLoader();
-    } else {
-      document.querySelector('.catalog__cards').classList.add('catalog__cards--load');
+    if (isGet) {
+      if (!document.querySelector('.catalog__load')) {
+        renderCatalogLoader();
+      } else {
+        document.querySelector('.catalog__cards').classList.add('catalog__cards--load');
+      }
     }
 
     xhr.addEventListener('load', function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        onLoad(xhr.response);
-      } else {
-        var errorMessage;
+      var errorMessage;
 
-        switch (xhr.status) {
-          case 400:
-            errorMessage = 'Неверный запрос';
-            showErrorModal('Код ошибки: 400.');
-            break;
-          case 401:
-            errorMessage = 'Пользователь не авторизован';
-            showErrorModal('Код ошибки: 401.');
-            break;
-          case 404:
-            errorMessage = 'Запрашиваемая информация не найдена';
-            showErrorModal('Код ошибки: 404.');
-            break;
-          default:
-            errorMessage = 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText;
-        }
+      switch (xhr.status) {
+        case 200:
+          onLoad(xhr.response);
+          break;
+        case 400:
+          errorMessage = 'Неверный запрос';
+          showErrorModal('Код ошибки: 400.');
+          break;
+        case 401:
+          errorMessage = 'Пользователь не авторизован';
+          showErrorModal('Код ошибки: 401.');
+          break;
+        case 404:
+          errorMessage = 'Запрашиваемая информация не найдена';
+          showErrorModal('Код ошибки: 404.');
+          break;
+        default:
+          errorMessage = 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText;
+      }
 
+      if (errorMessage) {
         onError(errorMessage);
       }
     });
@@ -82,31 +85,25 @@
       onError(message);
     });
 
-    xhr.timeout = 100000;
+    if (isGet) {
+      xhr.timeout = 15000;
+    } else {
+      xhr.timeout = 60000;
+    }
 
-    xhr.open('GET', URL.LOAD);
-    xhr.send();
-  };
-
-  // не работает
-  var upload = function (data, onUpload, onError) {
-    var xhr = createRequest();
-    xhr.responseType = 'json';
-
-    xhr.addEventListener('load', function () {
-      onUpload(xhr.response);
-    });
-
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-
-    xhr.open('POST', URL.UPLOAD);
-    xhr.send(data);
+    return xhr;
   };
 
   window.backend = {
-    load: load,
-    upload: upload
+    loadData: function (onLoad, onError) {
+      var xhr = createXhr(onLoad, onError, true);
+      xhr.open('GET', URL.GET);
+      xhr.send();
+    },
+    sendData: function (data, onLoad, onError) {
+      var xhr = createXhr(onLoad, onError);
+      xhr.open('POST', URL.POST);
+      xhr.send(data);
+    }
   };
 })();

@@ -90,7 +90,7 @@
   };
 
   renderEmptyBasket();
-  backend.load(successHandler, errorHandler);
+  backend.loadData(successHandler, errorHandler);
   blockFields(true);
 
   var addCardToFavorites = function (evt) {

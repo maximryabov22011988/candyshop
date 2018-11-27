@@ -4,8 +4,9 @@
   var isEnterEvent = window.util.isEnterEvent;
   var isEscEvent = window.util.isEscEvent;
 
-  var modalElement = document.querySelector('.modal');
-  var closeButton = modalElement.querySelector('.modal__close');
+  var modalEscPressHandler = function (evt) {
+    isEscEvent(evt, closeModal);
+  };
 
   var showModal = function (modal) {
     modal.classList.remove('modal--hidden');
@@ -24,7 +25,6 @@
     document.addEventListener('keydown', modalEscPressHandler);
   };
 
-
   var showSuccessModal = function () {
     var successModal = document.querySelector('.modal[data-modal="success"]');
     showModal(successModal);
@@ -35,9 +35,17 @@
     var target = evt.target;
 
     if (!target.classList.contains('modal')) {
-      modalElement.classList.add('modal--hidden');
-      document.removeEventListener('keydown', modalEscPressHandler);
+      var modalElements = document.querySelectorAll('.modal');
+
+      for (var i = 0; i < modalElements.length; i++) {
+        modalElements[i].classList.add('modal--hidden');
+        document.removeEventListener('keydown', modalEscPressHandler);
+      }
     } else {
+      if (!target.classList.contains('modal__close')) {
+        return;
+      }
+
       while (target) {
         target = target.parentElement;
 
@@ -50,15 +58,11 @@
     }
   };
 
-  var modalEscPressHandler = function (evt) {
-    isEscEvent(evt, closeModal);
-  };
-
-  closeButton.addEventListener('click', function (evt) {
+  document.addEventListener('click', function (evt) {
     closeModal(evt);
   });
 
-  closeButton.addEventListener('keydown', function (evt) {
+  document.addEventListener('keydown', function (evt) {
     isEnterEvent(evt, closeModal);
   });
 
