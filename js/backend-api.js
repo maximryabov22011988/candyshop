@@ -4,7 +4,7 @@
   var showErrorModal = window.modal.showErrorModal;
   var renderCatalogLoader = window.loader.renderCatalogLoader;
 
-  var URL = {
+  var URLS = {
     GET: 'https://js.dump.academy/candyshop/data',
     POST: 'https://js.dump.academy/candyshop'
   };
@@ -94,15 +94,15 @@
     return xhr;
   };
 
-  window.backend = {
+  window.backendApi = {
     loadData: function (onLoad, onError) {
       var xhr = createXhr(onLoad, onError, true);
-      xhr.open('GET', URL.GET);
+      xhr.open('GET', URLS.GET);
       xhr.send();
     },
     sendData: function (data, onLoad, onError) {
       var xhr = createXhr(onLoad, onError);
-      xhr.open('POST', URL.POST);
+      xhr.open('POST', URLS.POST);
       xhr.send(data);
     }
   };

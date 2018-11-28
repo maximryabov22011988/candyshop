@@ -1,9 +1,10 @@
 'use strict';
 
 (function () {
-  var backend = window.backend;
+  var backendApi = window.backendApi;
   var customValidation = window.validate.customValidation;
   var validateField = window.validate.validateField;
+  var verifyField = window.validate.verifyField;
   var showSuccessModal = window.modal.showSuccessModal;
 
   var orderForm = document.querySelector('.buy__form');
@@ -38,15 +39,23 @@
   };
 
   orderForm.addEventListener('submit', function (evt) {
-    var stopSubmit = false;
-
+    evt.preventDefault();
     blockFields(false);
+
+    var stopSubmit = false;
 
     for (var i = 0; i < orderFields.length; i++) {
       var field = orderFields[i];
 
       if (field.required === true) {
-        validateField(evt, customValidation, field);
+        var isValidField = validateField(evt, customValidation, field);
+
+        if (isValidField) {
+          var isVerifyField = verifyField(evt, customValidation, field);
+          if (!isVerifyField) {
+            field.focus();
+          }
+        }
 
         if (field.checkValidity() === false) {
           stopSubmit = true;
@@ -54,10 +63,10 @@
       }
     }
 
-    evt.preventDefault();
+    var isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
 
-    if (!stopSubmit) {
-      backend.sendData(new FormData(orderForm), successHandler, errorHandler);
+    if (!stopSubmit && isCorrectBankCard) {
+      backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
     }
   });
 

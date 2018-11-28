@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var backend = window.backend;
+  var backendApi = window.backendApi;
   var isEnterEvent = window.util.isEnterEvent;
   var renderEmptyBasket = window.loader.renderEmptyBasket;
   var blockFields = window.order.blockFields;
@@ -90,7 +90,7 @@
   };
 
   renderEmptyBasket();
-  backend.loadData(successHandler, errorHandler);
+  backendApi.loadData(successHandler, errorHandler);
   blockFields(true);
 
   var addCardToFavorites = function (evt) {
