@@ -2,13 +2,13 @@
 
 (function () {
   var KEYCODE = {
-    'LEFT_MOUSE_BUTTON': 1,
-    'TAB': 9,
+    '0': 48,
+    '9': 57,
     'ENTER': 13,
     'ESC': 27,
     'BACKSPACE': 8,
-    '0': 48,
-    '9': 57
+    'TAB': 9,
+    'LEFT_MOUSE_BUTTON': 1
   };
 
   var deepCopy = function (object) {

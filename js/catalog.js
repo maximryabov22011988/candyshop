@@ -6,7 +6,7 @@
   var renderEmptyBasket = window.loader.renderEmptyBasket;
   var blockFields = window.order.blockFields;
 
-  var RATING_MAP = {
+  var valueToClassName = {
     1: 'one',
     2: 'two',
     3: 'three',
@@ -19,7 +19,7 @@
   var moreGoodsButton = document.querySelector('.catalog__btn-more');
 
   var getRatingClassName = function (value) {
-    return 'stars__rating--' + RATING_MAP[value];
+    return 'stars__rating--' + valueToClassName[value];
   };
 
   var renderCatalogCard = function (good, id, className) {
