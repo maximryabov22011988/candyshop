@@ -61,8 +61,8 @@
           });
         }
 
-        for (var i = 0; i < numbers.length; i++) {
-          var number = Number(numbers[i]);
+        numbers.forEach(function (number, i) {
+          number = Number(number);
 
           if (i % 2 === 0) {
             number *= 2;
@@ -72,7 +72,7 @@
           }
 
           sum += number;
-        }
+        });
 
         return (sum === 0) ? false : sum % 10 === 0;
       },

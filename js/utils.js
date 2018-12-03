@@ -15,8 +15,7 @@
     var clone = Object.create(Object.getPrototypeOf(object));
     var properties = Object.getOwnPropertyNames(object);
 
-    for (var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++) {
-      var property = properties[propertyIndex];
+    properties.forEach(function (property) {
       var descriptor = Object.getOwnPropertyDescriptor(object, property);
 
       if (descriptor.value && typeof descriptor.value === 'object') {
@@ -24,7 +23,7 @@
       }
 
       Object.defineProperty(clone, property, descriptor);
-    }
+    });
 
     return clone;
   };
