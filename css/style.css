@@ -58,6 +58,9 @@ body {
   font-size: 16px;
   line-height: 24px;
 }
+.input-btn__label:hover {
+  cursor: pointer;
+}
 .input-btn__input:focus ~ .input-btn__label {
   text-shadow: #828282 1px 0 0;
   transition: text-shadow 0.2s ease;
@@ -343,6 +346,7 @@ body {
 .catalog__submit:hover {
   text-shadow: #6e58d9 1px 0 0;
   transition: text-shadow 0.2s ease;
+  cursor: pointer;
 }
 .catalog__submit:focus {
   text-shadow: #8269ff 1px 0 0;
@@ -510,6 +514,7 @@ body {
   color: #343434;
   border-color: #343434;
   transition: color 0.2s ease;
+  cursor: pointer;
 }
 .card__btn-composition:focus {
   color: #828282;
