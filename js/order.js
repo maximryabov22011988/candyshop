@@ -2,33 +2,34 @@
 
 (function () {
   var backendApi = window.backendApi;
+  var convertToArray = window.util.convertToArray;
   var customValidation = window.validate.customValidation;
   var validateField = window.validate.validateField;
   var verifyField = window.validate.verifyField;
   var showSuccessModal = window.modal.showSuccessModal;
 
   var orderForm = document.querySelector('.buy__form');
-  var orderFields = orderForm.querySelectorAll('input');
+  var orderFields = convertToArray(orderForm.querySelectorAll('input'));
   var paymentMessage = orderForm.querySelector('.payment__card-status');
 
   var blockFields = function (boolean) {
-    for (var i = 0; i < orderFields.length; i++) {
-      orderFields[i].disabled = boolean;
-    }
+    orderFields.forEach(function (field) {
+      field.disabled = boolean;
+    });
   };
 
   var successHandler = function (response, evt) {
     showSuccessModal();
 
-    for (var i = 0; i < orderFields.length; i++) {
-      var fieldContainer = orderFields[i].parentElement;
-      orderFields[i].value = '';
+    orderFields.forEach(function (field) {
+      var fieldContainer = field.parentElement;
+      field.value = '';
 
       if (fieldContainer.classList.contains('text-input')) {
         fieldContainer.classList.remove('text-input--error');
         fieldContainer.classList.remove('text-input--correct');
       }
-    }
+    });
 
     paymentMessage.textContent = 'Не определён';
     paymentMessage.style.color = '';
@@ -44,9 +45,7 @@
 
     var stopSubmit = false;
 
-    for (var i = 0; i < orderFields.length; i++) {
-      var field = orderFields[i];
-
+    orderFields.forEach(function (field) {
       if (field.required === true) {
         var isValidField = validateField(evt, customValidation, field);
 
@@ -61,7 +60,7 @@
           stopSubmit = true;
         }
       }
-    }
+    });
 
     var isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
 

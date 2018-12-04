@@ -28,6 +28,10 @@
     return clone;
   };
 
+  var convertToArray = function (pseudoArray) {
+    return Array.prototype.slice.call(pseudoArray);
+  };
+
   var isEnterEvent = function (evt, action) {
     if (evt.which === KEYCODE['ENTER']) {
       action(evt);
@@ -43,6 +47,7 @@
   window.util = {
     KEYCODE: KEYCODE,
     deepCopy: deepCopy,
+    convertToArray: convertToArray,
     isEnterEvent: isEnterEvent,
     isEscEvent: isEscEvent
   };

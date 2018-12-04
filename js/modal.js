@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var convertToArray = window.util.convertToArray;
   var isEnterEvent = window.util.isEnterEvent;
   var isEscEvent = window.util.isEscEvent;
 
@@ -35,12 +36,12 @@
     var target = evt.target;
 
     if (!target.classList.contains('modal')) {
-      var modalElements = document.querySelectorAll('.modal');
+      var modalElements = convertToArray(document.querySelectorAll('.modal'));
 
-      for (var i = 0; i < modalElements.length; i++) {
-        modalElements[i].classList.add('modal--hidden');
+      modalElements.forEach(function (element) {
+        element.classList.add('modal--hidden');
         document.removeEventListener('keydown', modalEscPressHandler);
-      }
+      });
     } else {
       if (!target.classList.contains('modal__close')) {
         return;
