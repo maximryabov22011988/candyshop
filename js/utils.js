@@ -11,6 +11,28 @@
     'LEFT_MOUSE_BUTTON': 1
   };
 
+  var makeCounter = function () {
+    var currentCount = 0;
+
+    var counter = function () {
+      currentCount++;
+    };
+
+    counter.get = function () {
+      return currentCount;
+    };
+
+    counter.set = function (value) {
+      currentCount = value;
+    };
+
+    counter.reset = function () {
+      currentCount = 0;
+    };
+
+    return counter;
+  };
+
   var deepCopy = function (object) {
     var clone = Object.create(Object.getPrototypeOf(object));
     var properties = Object.getOwnPropertyNames(object);
@@ -46,6 +68,7 @@
 
   window.util = {
     KEYCODE: KEYCODE,
+    makeCounter: makeCounter,
     deepCopy: deepCopy,
     convertToArray: convertToArray,
     isEnterEvent: isEnterEvent,

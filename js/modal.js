@@ -35,18 +35,14 @@
   var closeModal = function (evt) {
     var target = evt.target;
 
-    if (!target.classList.contains('modal')) {
+    if (target.tagName.toLowerCase() === 'body') {
       var modalElements = convertToArray(document.querySelectorAll('.modal'));
 
       modalElements.forEach(function (element) {
         element.classList.add('modal--hidden');
         document.removeEventListener('keydown', modalEscPressHandler);
       });
-    } else {
-      if (!target.classList.contains('modal__close')) {
-        return;
-      }
-
+    } else if (target.classList.contains('modal__close')) {
       while (target) {
         target = target.parentElement;
 

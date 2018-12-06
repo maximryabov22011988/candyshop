@@ -28,31 +28,31 @@
 
           <ul class="catalog__filter">
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="icecream" type="checkbox" id="filter-icecream" >
-              <label class="input-btn__label input-btn__label--checkbox" for="filter-icecream">Мороженное</label>
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="icecream" type="radio" id="filter-icecream" >
+              <label class="input-btn__label input-btn__label--checkbox" for="filter-icecream">Мороженое</label>
               <span class="input-btn__item-count">(7)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="soda" type="checkbox" id="filter-soda" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="soda" type="radio" id="filter-soda" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-soda">Газировка</label>
               <span class="input-btn__item-count">(5)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="gum" type="checkbox" id="filter-gum" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="gum" type="radio" id="filter-gum" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-gum">Жевательная резинка</label>
               <span class="input-btn__item-count">(6)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marmalade" type="checkbox" id="filter-marmalade" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marmalade" type="radio" id="filter-marmalade" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-marmalade">Мармелад</label>
               <span class="input-btn__item-count">(7)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marshmallows" type="checkbox" id="filter-marshmallows" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marshmallows" type="radio" id="filter-marshmallows" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-marshmallows">Зефир</label>
               <span class="input-btn__item-count">(6)</span>
             </li>
@@ -473,12 +473,13 @@
   <template id="empty-filters">
     <div class="catalog__empty-filter">
       <p><b>Хм... Что-то ты перемудрил с фильтрами.</b></p>
-      <p>Попробуй ещё раз, нажав <span class="catalog__show-all">«Показать всё»</span> или посмотри что мы предлагаем тебе попробовать.</p>
+      <p>Попробуй ещё раз. Нажми <span class="catalog__show-all">«Показать всё»</span>, чтобы сбросить все фильтры.</p>
     </div>
   </template>
   <script src="https://unpkg.com/imask"></script>
   <script src="js/mask.js"></script>
   <script src="js/utils.js"></script>
+  <script src="js/debounce.js"></script>
   <script src="js/loaders.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/tabs.js"></script>
@@ -488,8 +489,10 @@
   <script src="js/contacts.js"></script>
   <script src="js/payment.js"></script>
   <script src="js/delivery.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/range.js"></script>
+  <script src="js/filter.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/basket.js"></script>
-  <script src="js/filter.js"></script>
 </body>
 </html>

@@ -145,6 +145,11 @@ body {
   background-repeat: no-repeat;
 }
 
+.catalog__empty-filter p:first-child {
+  margin-top: 0;
+  color: #6e58d9;
+}
+
 /*text-input*/
 
 .text-input {
@@ -343,17 +348,14 @@ body {
   text-decoration: underline;
   color: #6e58d9;
 }
-.catalog__submit:hover {
-  text-shadow: #6e58d9 1px 0 0;
-  transition: text-shadow 0.2s ease;
+.catalog__submit:hover,
+.catalog__submit:focus {
+  opacity: 0.9;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease, opacity 0.2s ease;
   cursor: pointer;
 }
-.catalog__submit:focus {
-  text-shadow: #8269ff 1px 0 0;
-  color: #8269ff;
-  transition: color 0.2s ease,
-  text-shadow 0.2s ease;
-}
+
 .catalog__cards-wrap {
   width: 100%;
   display: flex;
@@ -422,7 +424,8 @@ body {
 }
 
 .catalog__show-all {
-  text-decoration: underline;
+  color: #6e58d9;
+  /* text-decoration: underline; */
 }
 /*card*/
 
@@ -1415,9 +1418,9 @@ body {
   position: fixed;
   left: 50%;
   width: 400px;
-  margin-left: -200px;
   top: 300px;
   z-index: 550;
+  transform: translate(-50%, 0);
   background-color: #ffffff;
   padding-bottom: 15px;
   border-radius: 6px;

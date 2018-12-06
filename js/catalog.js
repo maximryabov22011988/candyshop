@@ -5,82 +5,37 @@
   var isEnterEvent = window.util.isEnterEvent;
   var renderEmptyBasket = window.loader.renderEmptyBasket;
   var blockFields = window.order.blockFields;
+  var renderCatalogCards = window.render.renderCatalogCards;
+  var renderMoreCards = window.render.renderMoreCards;
+  var renderRangeAmount = window.range.renderRangeAmount;
+  var calcFilterItemAmount = window.filter.calcFilterItemAmount;
+  var renderFilterItemAmount = window.filter.renderFilterItemAmount;
 
-  var valueToClassName = {
-    1: 'one',
-    2: 'two',
-    3: 'three',
-    4: 'four',
-    5: 'five'
-  };
-
+  var rangeCount = document.querySelector('.range__count');
   var catalogCardsListElement = document.querySelector('.catalog__cards');
-  var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
   var moreGoodsButton = document.querySelector('.catalog__btn-more');
 
-  var getRatingClassName = function (value) {
-    return 'stars__rating--' + valueToClassName[value];
-  };
-
-  var renderCatalogCard = function (good, id, className) {
-    var catalogCardElement = catalogCardTemplate.cloneNode(true);
-
-    catalogCardElement.classList.remove('card--in-stock');
-    catalogCardElement.classList.add(className);
-    catalogCardElement.querySelector('.card__title').textContent = good.name;
-    catalogCardElement.querySelector('.card__img').src = 'img/cards/' + good.picture;
-    catalogCardElement.querySelector('.card__img').alt = good.name;
-    catalogCardElement.querySelector('.card__price').firstChild.textContent = good.price;
-    catalogCardElement.querySelector('.card__weight').textContent = '/ ' + good.weight + ' Г';
-    catalogCardElement.querySelector('.stars__rating').classList.add(getRatingClassName(good.rating.value));
-    catalogCardElement.querySelector('.star__count').textContent = good.rating.number;
-    catalogCardElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar;
-    catalogCardElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.contents;
-    catalogCardElement.querySelector('.card__btn').setAttribute('data-card-id', id);
-
-    if (good.amount === 0) {
-      catalogCardElement.querySelector('.card__btn').classList.add('card__btn--disabled');
-    }
-
-    return catalogCardElement;
-  };
-
-  var startIndex = 0;
-
-  var insertCatalogCard = function (goods, amount) {
-    if (startIndex >= goods.length) {
-      return;
-    }
-
-    var fragment = document.createDocumentFragment();
-
-    for (var i = startIndex; i < startIndex + amount; i++) {
-      var goodClass = 'card--soon';
-
-      if (goods.length > 5) {
-        goodClass = 'card--in-stock';
-      } else if (goods.length >= 1 && goods.length <= 5) {
-        goodClass = 'card--little';
-      }
-
-      fragment.appendChild(renderCatalogCard(goods[i], i, goodClass));
-    }
-
-    catalogCardsListElement.insertBefore(fragment, moreGoodsButton);
-    startIndex += amount;
-  };
-
   var successHandler = function (goods) {
-    goods = goods.filter(function (good) {
+    var filteredGoods = goods.filter(function (good) {
       return good.price > 0;
     });
 
-    catalogCardsListElement.classList.remove('catalog__cards--load');
+    var filterIdToAmount = calcFilterItemAmount(filteredGoods);
+    renderFilterItemAmount(filterIdToAmount);
 
-    insertCatalogCard(goods, 6);
+    renderRangeAmount(filteredGoods);
+    rangeCount.textContent = '(' + filteredGoods.length + ')';
+
+    filteredGoods.forEach(function (good, i) {
+      good.isFavorite = false;
+      good.id = i;
+    });
+
+    catalogCardsListElement.classList.remove('catalog__cards--load');
+    renderCatalogCards(filteredGoods);
     moreGoodsButton.classList.remove('visually-hidden');
 
-    window.goodsInCatalog = goods;
+    window.goodsInCatalog = filteredGoods;
   };
 
   var errorHandler = function (errorMessage) {
@@ -108,7 +63,7 @@
 
   var showMoreCatalogCard = function (evt) {
     evt.preventDefault();
-    insertCatalogCard(goodsInCatalog, 6);
+    renderMoreCards(goodsInCatalog);
 
     if (document.querySelectorAll('.catalog__card').length === goodsInCatalog.length) {
       moreGoodsButton.classList.add('visually-hidden');

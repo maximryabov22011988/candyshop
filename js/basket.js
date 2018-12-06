@@ -155,12 +155,14 @@
       var goodTotalPrice = 0;
 
       for (var id in goodsInBasket) {
-        var good = goodsInBasket[id];
+        if (goodsInBasket.hasOwnProperty(id)) {
+          var good = goodsInBasket[id];
 
-        if (good['orderedAmount'] !== 0) {
-          goodOrderedAmount += good['orderedAmount'];
-          goodPrice = good['price'] * good['orderedAmount'];
-          goodTotalPrice += goodPrice;
+          if (good['orderedAmount'] !== 0) {
+            goodOrderedAmount += good['orderedAmount'];
+            goodPrice = good['price'] * good['orderedAmount'];
+            goodTotalPrice += goodPrice;
+          }
         }
       }
 
