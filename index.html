@@ -28,31 +28,31 @@
 
           <ul class="catalog__filter">
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="icecream" type="radio" id="filter-icecream" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="icecream" type="checkbox" id="filter-icecream" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-icecream">Мороженое</label>
               <span class="input-btn__item-count">(7)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="soda" type="radio" id="filter-soda" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="soda" type="checkbox" id="filter-soda" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-soda">Газировка</label>
               <span class="input-btn__item-count">(5)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="gum" type="radio" id="filter-gum" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="gum" type="checkbox" id="filter-gum" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-gum">Жевательная резинка</label>
               <span class="input-btn__item-count">(6)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marmalade" type="radio" id="filter-marmalade" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marmalade" type="checkbox" id="filter-marmalade" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-marmalade">Мармелад</label>
               <span class="input-btn__item-count">(7)</span>
             </li>
 
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marshmallows" type="radio" id="filter-marshmallows" >
+              <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="marshmallows" type="checkbox" id="filter-marshmallows" >
               <label class="input-btn__label input-btn__label--checkbox" for="filter-marshmallows">Зефир</label>
               <span class="input-btn__item-count">(6)</span>
             </li>
@@ -108,7 +108,7 @@
 
           <ul class="catalog__filter">
             <li class="input-btn">
-              <input class="input-btn__input visually-hidden input-btn__input--radio" name="sort" value="popular" type="radio" id="filter-popular" checked>
+              <input class="input-btn__input visually-hidden input-btn__input--radio" name="sort" value="popular" type="radio" id="filter-popular">
               <label class="input-btn__label input-btn__label--radio" for="filter-popular">Сначала популярные</label>
             </li>
 
@@ -471,9 +471,9 @@
   </template>
 
   <template id="empty-filters">
-    <div class="catalog__empty-filter">
-      <p><b>Хм... Что-то ты перемудрил с фильтрами.</b></p>
-      <p>Попробуй ещё раз. Нажми <span class="catalog__show-all">«Показать всё»</span>, чтобы сбросить все фильтры.</p>
+    <div class="catalog__empty-filter empty-filter">
+      <p class="empty-filter__title">Хм... Что-то ты перемудрил с фильтрами.</p>
+      <p class="empty-filter__text">Попробуй ещё раз. Нажми «Показать всё», чтобы сбросить все фильтры.</p>
     </div>
   </template>
   <script src="https://unpkg.com/imask"></script>

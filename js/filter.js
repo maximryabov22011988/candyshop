@@ -15,7 +15,7 @@
   var catalogCardsListElement = document.querySelector('.catalog__cards');
   var moreGoodsButton = document.querySelector('.catalog__btn-more');
   var showAllCardButton = document.querySelector('.catalog__submit');
-
+  var favoriteCounter = document.querySelector('.input-btn__label[for="filter-favorite"]').nextElementSibling;
   var emptyFilterTemplate = document.querySelector('#empty-filters').content.querySelector('.catalog__empty-filter');
 
   var filterCounter = {
@@ -37,36 +37,36 @@
     goods.forEach(function (good) {
       switch (good.kind) {
         case 'Мороженое':
-          filterCounter['kind']['icecream']();
+          filterCounter['kind']['icecream'].increment();
           break;
         case 'Газировка':
-          filterCounter['kind']['soda']();
+          filterCounter['kind']['soda'].increment();
           break;
         case 'Жевательная резинка':
-          filterCounter['kind']['gum']();
+          filterCounter['kind']['gum'].increment();
           break;
         case 'Мармелад':
-          filterCounter['kind']['marmalade']();
+          filterCounter['kind']['marmalade'].increment();
           break;
         case 'Зефир':
-          filterCounter['kind']['marshmallow']();
+          filterCounter['kind']['marshmallow'].increment();
           break;
       }
 
       if (!good.nutritionFacts.sugar) {
-        filterCounter['sugar-free']();
+        filterCounter['sugar-free'].increment();
       }
 
       if (good.nutritionFacts.vegetarian) {
-        filterCounter['vegetarian']();
+        filterCounter['vegetarian'].increment();
       }
 
       if (!good.nutritionFacts.gluten) {
-        filterCounter['gluten-free']();
+        filterCounter['gluten-free'].increment();
       }
 
       if (good.amount > 0) {
-        filterCounter['availability']();
+        filterCounter['availability'].increment();
       }
     });
 
@@ -105,10 +105,16 @@
     }
   };
 
-  var renderEmptyFilter = function () {
+  var renderEmptyFilter = function (title, text) {
     var emptyFilter = catalogCardsListElement.querySelector('.catalog__empty-filter');
     if (!emptyFilter) {
       var emptyFilterElement = emptyFilterTemplate.cloneNode(true);
+      if (title) {
+        emptyFilterElement.querySelector('.empty-filter__title').textContent = title;
+      }
+      if (text) {
+        emptyFilterElement.querySelector('.empty-filter__text').textContent = text;
+      }
       catalogCardsListElement.insertBefore(emptyFilterElement, moreGoodsButton);
     } else {
       hideEmptyFilter(false);
@@ -124,9 +130,19 @@
     var isSugarFree = filter === 'filter-sugar-free' && good.nutritionFacts.sugar === false;
     var isVegetarian = filter === 'filter-vegetarian' && good.nutritionFacts.vegetarian === true;
     var isGlutenFree = filter === 'filter-gluten-free' && good.nutritionFacts.gluten === false;
+    var isAvailability = filter === 'filter-availability' && good.amount >= 1;
+    var isFavorite = filter === 'filter-favorite' && good.favorite === true;
 
-    if (!isIceCream && !isSoda && !isGum && !isMarmalade && !isMarshmallows && !isSugarFree && !isVegetarian && !isGlutenFree) {
+    if (!isIceCream && !isSoda && !isGum && !isMarmalade && !isMarshmallows && !isSugarFree && !isVegetarian && !isGlutenFree && !isAvailability  && !isFavorite) {
       return false;
+    }
+
+    if (isAvailability) {
+      return true;
+    }
+
+    if (isFavorite) {
+      return true;
     }
 
     if (isIceCream) {
@@ -157,38 +173,51 @@
     return false;
   };
 
-  var resetKindFilters = function (selectedFilters) {
-    var inputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input[name="food-type"]'));
-    var kindFilters = inputs.map(function (input) {
-      return input.id;
-    });
 
-    for (var i = 0; i < selectedFilters.length; i++) {
-      for (var j = 0; j < kindFilters.length; j++) {
-        if (selectedFilters[i] === kindFilters[j]) {
-          selectedFilters.splice(i, 1);
+  // var checkFilterInputs = function () {
+  //   var filterInputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input[checked="true"]'));
+  //   return filterInputs.some(function (input) {
+  //     return input.checked === true;
+  //   });
+  // };
 
-          if (selectedFilters.length === 0) {
-            break;
-          }
-        }
-      }
-    }
-
-    return selectedFilters;
-  };
-
-  var resetFilters = function () {
+  var disableFilterInputs = function (isDisabled) {
     var filterInputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
     filterInputs.forEach(function (input) {
-      input.setAttribute('checked', false);
-      input.checked = false;
+      if (input.name !== 'mark' && input.name !== 'sort') {
+        if (isDisabled) {
+          input.disabled = true;
+          input.nextElementSibling.classList.add('input-btn__label--disabled');
+        } else {
+          input.disabled = false;
+          input.nextElementSibling.classList.remove('input-btn__label--disabled');
+        }
+      }
     });
+  };
 
-    renderCatalogCards(window.goodsInCatalog);
-    moreGoodsButton.classList.remove('visually-hidden');
+  var resetFilterInputs = function (filterId) {
+    var filterInputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
+    if (filterId) {
+      filterInputs.forEach(function (input) {
+        if (input.id !== filterId) {
+          input.setAttribute('checked', false);
+          input.checked = false;
+        }
+      });
+    } else {
+      filterInputs.forEach(function (input) {
+        input.setAttribute('checked', false);
+        input.checked = false;
+      });
+    }
+  };
 
-    isFiltered = false;
+  var resetFavoriteClass = function () {
+    var favoriteButtons = convertToArray(document.querySelectorAll('.card__btn-favorite--selected'));
+    favoriteButtons.forEach(function (button) {
+      button.classList.remove('card__btn-favorite--selected');
+    });
   };
 
   var deleteCatalogCards = function () {
@@ -198,9 +227,15 @@
     });
   };
 
+  var showUnfilteredCards = function () {
+    deleteCatalogCards();
+    renderCatalogCards(window.goodsInCatalog);
+    moreGoodsButton.classList.remove('visually-hidden');
+    isFiltered = false;
+  };
+
   var updateCatalogCards = function (goods) {
     deleteCatalogCards();
-
     var fragment = document.createDocumentFragment();
     goods.forEach(function (good) {
       fragment.appendChild(renderCatalogCard(good, good.id, 'card--in-stock'));
@@ -210,26 +245,112 @@
 
   var toggleFilter = debounce(function (evt) {
     var target = evt.target;
-    var id = target.htmlFor;
+    var filterId = target.htmlFor;
+    var isKindFilter = target.previousElementSibling.name === 'food-type';
+    var isAvailabilityFilter = filterId === 'filter-availability';
+    var isFavoriteFilter = filterId === 'filter-favorite';
+    var isChecked = target.previousElementSibling.checked;
 
-    if (target.previousElementSibling.name === 'food-type') {
-      filters = resetKindFilters(filters);
-    }
-
-    if (filters.indexOf(id) === -1) {
-      filters.push(id);
+    if (filters.indexOf(filterId) === -1) {
+      filters.push(filterId);
     } else {
-      filters.splice(filters.indexOf(id), 1);
+      filters.splice(filters.indexOf(filterId), 1);
     }
 
-    if (filters.length > 0 && filters.length < 2) {
-      filteredGoods = window.goodsInCatalog.filter(function (good) {
-        return filterGood(filters[0], good);
+    if (isKindFilter) {
+      filteredGoods.length = 0;
+
+      filters.forEach(function (filter) {
+        window.goodsInCatalog.filter(function (good) {
+          var isCorrect = filterGood(filter, good);
+          if (isCorrect) {
+            filteredGoods.push(good);
+            return true;
+          }
+          return false;
+        });
       });
       updateCatalogCards(filteredGoods);
+      isFiltered = true;
+
+      if (filters.length === 0 || filteredGoods.length === 0) {
+        showUnfilteredCards();
+      }
+      return;
+    }
+
+    if (isAvailabilityFilter) {
+      hideEmptyFilter(true);
+      if (isChecked) {
+        resetFilterInputs(filterId);
+        disableFilterInputs(true);
+
+        filteredGoods = window.goodsInCatalog.filter(function (good) {
+          var isCorrect = filterGood(filterId, good);
+          return isCorrect ? true : false;
+        });
+
+        updateCatalogCards(filteredGoods);
+        isFiltered = true;
+      } else {
+        filteredGoods.length = 0;
+        filters.length = 0;
+        isFiltered = false;
+        disableFilterInputs(false);
+        showUnfilteredCards();
+        return;
+      }
+    }
+
+    if (isFavoriteFilter) {
+      if (isChecked) {
+        resetFilterInputs(filterId);
+        disableFilterInputs(true);
+
+        filteredGoods = window.goodsInCatalog.filter(function (good) {
+          var isCorrect = filterGood(filterId, good);
+          return isCorrect ? true : false;
+        });
+
+        updateCatalogCards(filteredGoods);
+        isFiltered = true;
+      } else {
+        filteredGoods.length = 0;
+        filters.length = 0;
+        isFiltered = false;
+        disableFilterInputs(false);
+      }
+
+      if (favoriteCounter.textContent.slice(1, -1) === '0') {
+        renderEmptyFilter('Увы, но тебя пока ничего не зацепило ...', 'Попробуй позже. Нажми «Показать всё», чтобы сбросить фильтр.');
+      }
+      return;
+    }
+
+    if (filters.length === 1) {
+      filteredGoods = window.goodsInCatalog.filter(function (good) {
+        var isCorrect = filterGood(filters[0], good);
+        return isCorrect ? true : false;
+      });
+      updateCatalogCards(filteredGoods);
+      isFiltered = true;
+    } else if (filters.length === 0) {
+      showUnfilteredCards();
     }
 
     if (filters.length >= 2) {
+      //
+      updateCatalogCards(filteredGoods);
+      isFiltered = true;
+    }
+
+    if (filters.length === 0 && filteredGoods.length === 0) {
+      showUnfilteredCards();
+    } else if (filters.length > 0 && filteredGoods.length === 0) {
+      renderEmptyFilter();
+    }
+/*
+    if (!isAvailabilityFilter && !isFavoriteFilter) {
       filters.forEach(function (filter, it) {
         if (it === 0) {
           filteredGoods = window.goodsInCatalog.filter(function (good) {
@@ -243,12 +364,7 @@
       });
       updateCatalogCards(filteredGoods);
     }
-
-    if (filters.length && filteredGoods.length === 0) {
-      renderEmptyFilter();
-    } else if (filteredGoods.length > 0) {
-      hideEmptyFilter(true);
-    }
+ */
   }, 300);
 
   var manageFilter = function (evt, filterFunc) {
@@ -266,11 +382,20 @@
 
   showAllCardButton.addEventListener('click', function (evt) {
     evt.preventDefault();
+
     filteredGoods.length = 0;
     filters.length = 0;
+    window.favoriteGoods = {};
+
     hideEmptyFilter(true);
+    resetFilterInputs();
+    disableFilterInputs(false);
     deleteCatalogCards();
-    resetFilters();
+    renderCatalogCards(window.goodsInCatalog, window.goodsInCatalog.length);
+    moreGoodsButton.classList.add('visually-hidden');
+
+    resetFavoriteClass();
+    favoriteCounter.textContent = '(0)';
   });
 
   filterContainer.addEventListener('click', function (evt) {
@@ -278,11 +403,9 @@
   });
 
   filterContainer.addEventListener('mousedown', function (evt) {
-    if (evt.target.tagName.toLowerCase() !== 'label') {
-      return;
+    if (evt.target.tagName.toLowerCase() === 'label') {
+      evt.preventDefault();
     }
-
-    evt.preventDefault();
   });
 
   window.filter = {

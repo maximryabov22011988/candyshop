@@ -61,6 +61,7 @@ body {
 .input-btn__label:hover {
   cursor: pointer;
 }
+
 .input-btn__input:focus ~ .input-btn__label {
   text-shadow: #828282 1px 0 0;
   transition: text-shadow 0.2s ease;
@@ -145,8 +146,9 @@ body {
   background-repeat: no-repeat;
 }
 
-.catalog__empty-filter p:first-child {
+.empty-filter__title {
   margin-top: 0;
+  font-weight: bold;
   color: #6e58d9;
 }
 
@@ -1769,3 +1771,14 @@ body {
   }
 }
 
+.input-btn__label--disabled {
+  color: #a2a2a2;
+}
+.input-btn__label--disabled:hover {
+  color: #a2a2a2;
+  text-shadow: none;
+  cursor: default;
+}
+.input-btn__label--disabled.input-btn__label--checkbox:hover::before {
+  background: none;
+}

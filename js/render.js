@@ -37,7 +37,14 @@
     catalogCardElement.querySelector('.star__count').textContent = good.rating.number;
     catalogCardElement.querySelector('.card__characteristic').textContent = good.nutritionFacts.sugar;
     catalogCardElement.querySelector('.card__composition-list').textContent = good.nutritionFacts.contents;
+    catalogCardElement.querySelector('.card__btn-favorite').setAttribute('data-card-id', good.id);
     catalogCardElement.querySelector('.card__btn').setAttribute('data-card-id', good.id);
+
+    if (good.favorite === true) {
+      catalogCardElement.querySelector('.card__btn-favorite').classList.add('card__btn-favorite--selected');
+    } else if (good.favorite === false) {
+      catalogCardElement.querySelector('.card__btn-favorite').classList.remove('card__btn-favorite--selected');
+    }
 
     if (good.amount === 0) {
       catalogCardElement.querySelector('.card__btn').classList.add('card__btn--disabled');
@@ -46,10 +53,12 @@
     return catalogCardElement;
   };
 
-  var renderCatalogCards = function (goods) {
+  var renderCatalogCards = function (goods, amount) {
+    amount = amount || 6;
+
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < amount; i++) {
       var goodClass = 'card--soon';
 
       if (goods.length > 5) {

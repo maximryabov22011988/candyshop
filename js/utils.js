@@ -14,8 +14,14 @@
   var makeCounter = function () {
     var currentCount = 0;
 
-    var counter = function () {
+    var counter = function () {};
+
+    counter.increment = function () {
       currentCount++;
+    };
+
+    counter.decrement = function () {
+      currentCount--;
     };
 
     counter.get = function () {
