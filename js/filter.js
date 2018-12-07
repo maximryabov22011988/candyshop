@@ -11,11 +11,14 @@
   var filters = [];
   var isFiltered = false;
 
+  var foodTypeFilterCounter = makeCounter();
+  var foodPropertyFilterCounter = makeCounter();
+
   var filterContainer = document.querySelector('.catalog__sidebar');
   var catalogCardsListElement = document.querySelector('.catalog__cards');
   var moreGoodsButton = document.querySelector('.catalog__btn-more');
   var showAllCardButton = document.querySelector('.catalog__submit');
-  var favoriteCounter = document.querySelector('.input-btn__label[for="filter-favorite"]').nextElementSibling;
+
   var emptyFilterTemplate = document.querySelector('#empty-filters').content.querySelector('.catalog__empty-filter');
 
   var filterCounter = {
@@ -94,34 +97,28 @@
     }
   };
 
-  var hideEmptyFilter = function (hide) {
-    var emptyFilter = catalogCardsListElement.querySelector('.catalog__empty-filter');
-    if (emptyFilter) {
-      if (hide) {
-        emptyFilter.classList.add('visually-hidden');
-      } else {
-        emptyFilter.classList.remove('visually-hidden');
-      }
-    }
+  var renderEmptyFilter = function () {
+    var emptyFilterElement = emptyFilterTemplate.cloneNode(true);
+    emptyFilterElement.classList.add('visually-hidden');
+    catalogCardsListElement.insertBefore(emptyFilterElement, moreGoodsButton);
   };
 
-  var renderEmptyFilter = function (title, text) {
+  var toggleEmptyFilter = function (isShow) {
     var emptyFilter = catalogCardsListElement.querySelector('.catalog__empty-filter');
-    if (!emptyFilter) {
-      var emptyFilterElement = emptyFilterTemplate.cloneNode(true);
-      if (title) {
-        emptyFilterElement.querySelector('.empty-filter__title').textContent = title;
-      }
-      if (text) {
-        emptyFilterElement.querySelector('.empty-filter__text').textContent = text;
-      }
-      catalogCardsListElement.insertBefore(emptyFilterElement, moreGoodsButton);
+    if (isShow) {
+      emptyFilter.classList.remove('visually-hidden');
     } else {
-      hideEmptyFilter(false);
+      emptyFilter.classList.add('visually-hidden');
     }
   };
 
-  var filterGood = function (filter, good) {
+  var changeEmptyFilterText = function (title, text) {
+    var emptyFilter = catalogCardsListElement.querySelector('.catalog__empty-filter');
+    emptyFilter.querySelector('.empty-filter__title').textContent = title;
+    emptyFilter.querySelector('.empty-filter__text').textContent = text;
+  };
+
+  var isCorrectGood = function (filter, good) {
     var isIceCream = filter === 'filter-icecream' && good.kind === 'Мороженое';
     var isSoda = filter === 'filter-soda' && good.kind === 'Газировка';
     var isGum = filter === 'filter-gum' && good.kind === 'Жевательная резинка';
@@ -133,58 +130,50 @@
     var isAvailability = filter === 'filter-availability' && good.amount >= 1;
     var isFavorite = filter === 'filter-favorite' && good.favorite === true;
 
-    if (!isIceCream && !isSoda && !isGum && !isMarmalade && !isMarshmallows && !isSugarFree && !isVegetarian && !isGlutenFree && !isAvailability  && !isFavorite) {
+    if (!isIceCream && !isSoda && !isGum && !isMarmalade && !isMarshmallows && !isSugarFree && !isVegetarian && !isGlutenFree && !isAvailability && !isFavorite) {
       return false;
     }
 
-    if (isAvailability) {
-      return true;
-    }
-
-    if (isFavorite) {
-      return true;
-    }
-
-    if (isIceCream) {
-      return true;
-    }
-    if (isSoda) {
-      return true;
-    }
-    if (isGum) {
-      return true;
-    }
-    if (isMarmalade) {
-      return true;
-    }
-    if (isMarshmallows) {
-      return true;
-    }
-    if (isSugarFree) {
-      return true;
-    }
-    if (isVegetarian) {
-      return true;
-    }
-    if (isGlutenFree) {
+    if (isIceCream || isSoda || isGum || isMarmalade || isMarshmallows || isSugarFree || isVegetarian || isGlutenFree || isAvailability || isFavorite) {
       return true;
     }
 
     return false;
   };
 
+  var isCheckedInputs = function () {
+    var inputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
+    return inputs.some(function (input) {
+      return input.checked === true;
+    });
+  };
 
-  // var checkFilterInputs = function () {
-  //   var filterInputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input[checked="true"]'));
-  //   return filterInputs.some(function (input) {
-  //     return input.checked === true;
-  //   });
-  // };
+  var disableRangeToggle = function (isDisabled) {
+    var rangeContainer = filterContainer.querySelector('.range');
+    if (isDisabled) {
+      rangeContainer.classList.add('range--disabled');
+    } else {
+      rangeContainer.classList.remove('range--disabled');
+    }
+  };
 
-  var disableFilterInputs = function (isDisabled) {
+  var disableInputsToggle = function (isDisabled) {
+    var inputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
+    inputs.forEach(function (input) {
+      if (isDisabled) {
+        input.disabled = true;
+        input.nextElementSibling.classList.add('input-btn__label--disabled');
+      } else {
+        input.disabled = false;
+        input.nextElementSibling.classList.remove('input-btn__label--disabled');
+      }
+    });
+  };
+
+  var disableInputsGroup = function (isDisabled, filterGroupName) {
     var filterInputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
     filterInputs.forEach(function (input) {
-      if (input.name !== 'mark' && input.name !== 'sort') {
+      if (input.name === filterGroupName) {
         if (isDisabled) {
           input.disabled = true;
           input.nextElementSibling.classList.add('input-btn__label--disabled');
@@ -196,28 +185,38 @@
     });
   };
 
-  var resetFilterInputs = function (filterId) {
+  var disableGroupInputsExcept = function (targetFilter, filterGroupName, isDisabled) {
     var filterInputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
+    filterInputs.forEach(function (input) {
+      if (isDisabled) {
+        if (input.name === filterGroupName && input.id !== targetFilter) {
+          input.disabled = true;
+          input.nextElementSibling.classList.add('input-btn__label--disabled');
+        }
+      } else {
+        if (input.name === filterGroupName) {
+          input.disabled = false;
+          input.nextElementSibling.classList.remove('input-btn__label--disabled');
+        }
+      }
+    });
+  };
+
+  var resetInputs = function (filterId) {
+    var inputs = convertToArray(document.querySelectorAll('.catalog__filter .input-btn__input'));
     if (filterId) {
-      filterInputs.forEach(function (input) {
+      inputs.forEach(function (input) {
         if (input.id !== filterId) {
           input.setAttribute('checked', false);
           input.checked = false;
         }
       });
     } else {
-      filterInputs.forEach(function (input) {
+      inputs.forEach(function (input) {
         input.setAttribute('checked', false);
         input.checked = false;
       });
     }
-  };
-
-  var resetFavoriteClass = function () {
-    var favoriteButtons = convertToArray(document.querySelectorAll('.card__btn-favorite--selected'));
-    favoriteButtons.forEach(function (button) {
-      button.classList.remove('card__btn-favorite--selected');
-    });
   };
 
   var deleteCatalogCards = function () {
@@ -225,13 +224,6 @@
     catalogCards.forEach(function (card) {
       catalogCardsListElement.removeChild(card);
     });
-  };
-
-  var showUnfilteredCards = function () {
-    deleteCatalogCards();
-    renderCatalogCards(window.goodsInCatalog);
-    moreGoodsButton.classList.remove('visually-hidden');
-    isFiltered = false;
   };
 
   var updateCatalogCards = function (goods) {
@@ -246,10 +238,26 @@
   var toggleFilter = debounce(function (evt) {
     var target = evt.target;
     var filterId = target.htmlFor;
-    var isKindFilter = target.previousElementSibling.name === 'food-type';
+
+    var isFoodTypeFilter = target.previousElementSibling.name === 'food-type';
+    var isFoodPropertyFilter = target.previousElementSibling.name === 'food-property';
+
     var isAvailabilityFilter = filterId === 'filter-availability';
     var isFavoriteFilter = filterId === 'filter-favorite';
+
     var isChecked = target.previousElementSibling.checked;
+
+    if (isFoodTypeFilter && isChecked) {
+      foodTypeFilterCounter.increment();
+    } else if (isFoodTypeFilter && !isChecked) {
+      foodTypeFilterCounter.decrement();
+    }
+
+    if (isFoodPropertyFilter && isChecked) {
+      foodPropertyFilterCounter.increment();
+    } else if (isFoodPropertyFilter && !isChecked) {
+      foodPropertyFilterCounter.decrement();
+    }
 
     if (filters.indexOf(filterId) === -1) {
       filters.push(filterId);
@@ -257,13 +265,12 @@
       filters.splice(filters.indexOf(filterId), 1);
     }
 
-    if (isKindFilter) {
+    if (isFoodTypeFilter) {
       filteredGoods.length = 0;
 
       filters.forEach(function (filter) {
         window.goodsInCatalog.filter(function (good) {
-          var isCorrect = filterGood(filter, good);
-          if (isCorrect) {
+          if (isCorrectGood(filter, good)) {
             filteredGoods.push(good);
             return true;
           }
@@ -271,101 +278,165 @@
         });
       });
       updateCatalogCards(filteredGoods);
-      isFiltered = true;
 
-      if (filters.length === 0 || filteredGoods.length === 0) {
-        showUnfilteredCards();
-      }
-      return;
-    }
-
-    if (isAvailabilityFilter) {
-      hideEmptyFilter(true);
-      if (isChecked) {
-        resetFilterInputs(filterId);
-        disableFilterInputs(true);
-
-        filteredGoods = window.goodsInCatalog.filter(function (good) {
-          var isCorrect = filterGood(filterId, good);
-          return isCorrect ? true : false;
-        });
-
-        updateCatalogCards(filteredGoods);
-        isFiltered = true;
-      } else {
-        filteredGoods.length = 0;
-        filters.length = 0;
-        isFiltered = false;
-        disableFilterInputs(false);
-        showUnfilteredCards();
+      if (foodTypeFilterCounter.get() > 1) {
         return;
       }
     }
 
+    if (filters.length === 1 && isFoodPropertyFilter) {
+      if (foodPropertyFilterCounter.get() >= 1) {
+        disableInputsGroup(true, 'food-type');
+        disableRangeToggle(true);
+      }
+
+      filteredGoods.length = 0;
+      filteredGoods = window.goodsInCatalog.filter(function (good) {
+        return isCorrectGood(filters[0], good);
+      });
+      updateCatalogCards(filteredGoods);
+    }
+
     if (isFavoriteFilter) {
+      var favoriteAmount = Number(target.nextElementSibling.textContent.slice(1, -1));
+      filteredGoods.length = 0;
+
       if (isChecked) {
-        resetFilterInputs(filterId);
-        disableFilterInputs(true);
+        resetInputs(filterId);
+        disableGroupInputsExcept(filterId, 'mark', true);
+        disableInputsGroup(true, 'food-type');
+        disableInputsGroup(true, 'food-property');
+        disableRangeToggle(true);
+        disableInputsGroup(true, 'sort');
 
         filteredGoods = window.goodsInCatalog.filter(function (good) {
-          var isCorrect = filterGood(filterId, good);
-          return isCorrect ? true : false;
+          return isCorrectGood(filterId, good);
         });
-
         updateCatalogCards(filteredGoods);
-        isFiltered = true;
-      } else {
+      }
+
+      if (!isChecked) {
         filteredGoods.length = 0;
         filters.length = 0;
-        isFiltered = false;
-        disableFilterInputs(false);
+        disableInputsToggle();
+        disableRangeToggle();
       }
 
-      if (favoriteCounter.textContent.slice(1, -1) === '0') {
-        renderEmptyFilter('Увы, но тебя пока ничего не зацепило ...', 'Попробуй позже. Нажми «Показать всё», чтобы сбросить фильтр.');
+      if (!favoriteAmount) {
+        changeEmptyFilterText('Увы, пока ничего тебе не приглянулось.', 'Попробуй позже. Нажми «Показать всё», чтобы сбросить  фильтр.');
+        toggleEmptyFilter(true);
+      } else {
+        toggleEmptyFilter();
       }
+
       return;
     }
 
-    if (filters.length === 1) {
-      filteredGoods = window.goodsInCatalog.filter(function (good) {
-        var isCorrect = filterGood(filters[0], good);
-        return isCorrect ? true : false;
-      });
-      updateCatalogCards(filteredGoods);
-      isFiltered = true;
-    } else if (filters.length === 0) {
-      showUnfilteredCards();
+    if (isAvailabilityFilter) {
+      toggleEmptyFilter();
+
+      if (isChecked) {
+        resetInputs(filterId);
+        disableGroupInputsExcept(filterId, 'mark', true);
+        disableInputsGroup(true, 'food-type');
+        disableInputsGroup(true, 'food-property');
+        disableInputsGroup(true, 'sort');
+        disableRangeToggle(true);
+        filteredGoods = window.goodsInCatalog.filter(function (good) {
+          return isCorrectGood(filterId, good);
+        });
+        updateCatalogCards(filteredGoods);
+      }
+
+      if (!isChecked) {
+        filteredGoods.length = 0;
+        filters.length = 0;
+        disableInputsToggle();
+        disableRangeToggle();
+      }
     }
 
-    if (filters.length >= 2) {
-      //
-      updateCatalogCards(filteredGoods);
-      isFiltered = true;
-    }
+    if (filters.length >= 2 || foodTypeFilterCounter.get() >= 1 && foodPropertyFilterCounter.get() >= 0) {
+      if (foodTypeFilterCounter.get() >= 1 && isFoodPropertyFilter && !isAvailabilityFilter && !isFavoriteFilter) {
 
-    if (filters.length === 0 && filteredGoods.length === 0) {
-      showUnfilteredCards();
-    } else if (filters.length > 0 && filteredGoods.length === 0) {
-      renderEmptyFilter();
-    }
-/*
-    if (!isAvailabilityFilter && !isFavoriteFilter) {
-      filters.forEach(function (filter, it) {
-        if (it === 0) {
-          filteredGoods = window.goodsInCatalog.filter(function (good) {
-            return filterGood(filter, good);
-          });
+        if (foodPropertyFilterCounter.get() === 1) {
+          disableGroupInputsExcept(filterId, 'food-property', true);
+          disableRangeToggle(true);
         } else {
-          filteredGoods = filteredGoods.filter(function (good) {
-            return filterGood(filter, good);
-          });
+          disableInputsGroup(false, 'food-property');
+          disableRangeToggle();
         }
-      });
-      updateCatalogCards(filteredGoods);
+
+        if (foodPropertyFilterCounter.get() > 1) {
+          evt.preventDefault();
+          return;
+        }
+
+        var tempFilteredGoods = [];
+
+        filteredGoods.forEach(function (good) {
+          var correctCounter = 0;
+
+          filters.forEach(function (filter) {
+            if (filterId === 'filter-sugar-free' && filter === filterId && good.nutritionFacts.sugar === false ||
+                filterId === 'filter-vegetarian' && filter === filterId && good.nutritionFacts.vegetarian === true ||
+                filterId === 'filter-gluten-free' && filter === filterId && good.nutritionFacts.gluten === false) {
+              correctCounter++;
+            }
+          });
+
+          if (correctCounter === foodPropertyFilterCounter.get()) {
+            tempFilteredGoods.push(good);
+          }
+        });
+        updateCatalogCards(tempFilteredGoods);
+      } else {
+        if (foodPropertyFilterCounter.get() >= 1) {
+          disableInputsGroup(true, 'food-type');
+          disableRangeToggle(true);
+        }
+
+        filters.forEach(function (filter, it) {
+          if (it === 0) {
+            filteredGoods = window.goodsInCatalog.filter(function (good) {
+              return isCorrectGood(filter, good);
+            });
+          } else {
+            filteredGoods = filteredGoods.filter(function (good) {
+              return isCorrectGood(filter, good);
+            });
+          }
+        });
+        updateCatalogCards(filteredGoods);
+      }
+
+      if (isCheckedInputs() && catalogCardsListElement.querySelectorAll('.catalog__card').length === 0) {
+        changeEmptyFilterText('Хм... Что-то ты перемудрил с фильтрами.', 'Попробуй ещё раз. Нажми «Показать всё», чтобы сбросить все фильтры.');
+        toggleEmptyFilter(true);
+        resetInputs();
+        disableInputsToggle(true);
+        disableRangeToggle(true);
+        return;
+      }
     }
- */
-  }, 300);
+
+    if (isCheckedInputs()) {
+      isFiltered = true;
+      toggleEmptyFilter();
+    }
+
+    if (!isCheckedInputs()) {
+      filteredGoods.length = 0;
+      filters.length = 0;
+      isFiltered = false;
+      disableInputsGroup(false, 'food-type');
+      disableRangeToggle();
+      deleteCatalogCards();
+      moreGoodsButton.classList.add('visually-hidden');
+      changeEmptyFilterText('Ты не выбрал не одного фильтра ...', 'Попробуй еще раз. Нажми на подходящий фильтр или «Показать всё». Вдруг что-то придется тебе по душе');
+      toggleEmptyFilter(true);
+    }
+  }, 100);
 
   var manageFilter = function (evt, filterFunc) {
     if (evt.target.tagName.toLowerCase() !== 'label') {
@@ -380,24 +451,6 @@
     filterFunc(evt);
   };
 
-  showAllCardButton.addEventListener('click', function (evt) {
-    evt.preventDefault();
-
-    filteredGoods.length = 0;
-    filters.length = 0;
-    window.favoriteGoods = {};
-
-    hideEmptyFilter(true);
-    resetFilterInputs();
-    disableFilterInputs(false);
-    deleteCatalogCards();
-    renderCatalogCards(window.goodsInCatalog, window.goodsInCatalog.length);
-    moreGoodsButton.classList.add('visually-hidden');
-
-    resetFavoriteClass();
-    favoriteCounter.textContent = '(0)';
-  });
-
   filterContainer.addEventListener('click', function (evt) {
     manageFilter(evt, toggleFilter);
   });
@@ -408,8 +461,28 @@
     }
   });
 
+  showAllCardButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+
+    filteredGoods.length = 0;
+    filters.length = 0;
+
+    foodTypeFilterCounter.reset();
+    foodPropertyFilterCounter.reset();
+
+    toggleEmptyFilter();
+    resetInputs();
+    disableInputsToggle();
+    disableRangeToggle();
+    deleteCatalogCards();
+
+    renderCatalogCards(window.goodsInCatalog, window.goodsInCatalog.length);
+    moreGoodsButton.classList.add('visually-hidden');
+  });
+
   window.filter = {
     calcFilterItemAmount: calcFilterItemAmount,
-    renderFilterItemAmount: renderFilterItemAmount
+    renderFilterItemAmount: renderFilterItemAmount,
+    renderEmptyFilter: renderEmptyFilter
   };
 })();

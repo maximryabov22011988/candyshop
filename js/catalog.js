@@ -11,6 +11,7 @@
   var renderRangeAmount = window.range.renderRangeAmount;
   var calcFilterItemAmount = window.filter.calcFilterItemAmount;
   var renderFilterItemAmount = window.filter.renderFilterItemAmount;
+  var renderEmptyFilter = window.filter.renderEmptyFilter;
 
   var favoriteGoodsCounter = makeCounter();
 
@@ -24,15 +25,14 @@
       return good.price > 0;
     });
 
-    var filterIdToAmount = calcFilterItemAmount(filteredGoods);
-    renderFilterItemAmount(filterIdToAmount);
-
+    renderFilterItemAmount(calcFilterItemAmount(filteredGoods));
+    renderEmptyFilter();
     renderRangeAmount(filteredGoods);
     rangeCount.textContent = '(' + filteredGoods.length + ')';
 
     filteredGoods.forEach(function (good, i) {
+      good.isFavorite = false;
       good.id = i;
-      good.favorite = false;
     });
 
     catalogCardsListElement.classList.remove('catalog__cards--load');
@@ -75,7 +75,6 @@
     }
 
     favoriteCounter.textContent = '(' + favoriteGoodsCounter.get() + ')';
-    console.log(favoriteGoodsCounter.get());
     target.blur();
   };
 
