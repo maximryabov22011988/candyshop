@@ -10,8 +10,10 @@
   };
 
   var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
-  var catalogCardsListElement = document.querySelector('.catalog__cards');
-  var moreGoodsButton = document.querySelector('.catalog__btn-more');
+  var basketCardTemplate = document.querySelector('#card-order').content.querySelector('.goods_card');
+
+  var catalogCardsContainer = document.querySelector('.catalog__cards');
+  var showMoreGoodsButton = document.querySelector('.catalog__btn-more');
 
   var getRatingClassName = function (value) {
     return 'stars__rating--' + valueToClassName[value];
@@ -70,7 +72,7 @@
       fragment.appendChild(renderCatalogCard(goods[i], i, goodClass));
     }
 
-    catalogCardsListElement.insertBefore(fragment, moreGoodsButton);
+    catalogCardsContainer.insertBefore(fragment, showMoreGoodsButton);
   };
 
   var startIndex = 0;
@@ -98,13 +100,32 @@
         startIndex = 0;
       }
 
-      catalogCardsListElement.insertBefore(fragment, moreGoodsButton);
+      catalogCardsContainer.insertBefore(fragment, showMoreGoodsButton);
     }
+  };
+
+  var renderBasketCard = function (good, id) {
+    var basketCardElement = basketCardTemplate.cloneNode(true);
+
+    basketCardElement.querySelector('.card-order__title').textContent = good.name;
+    basketCardElement.querySelector('.card-order__img').src = 'img/cards/' + good.picture;
+    basketCardElement.querySelector('.card-order__img').alt = good.name;
+    basketCardElement.querySelector('.card-order__price').textContent = good.price + ' ₽';
+
+    basketCardElement.setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__close').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__price').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__count').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__btn--decrease').setAttribute('data-card-id', id);
+    basketCardElement.querySelector('.card-order__btn--increase').setAttribute('data-card-id', id);
+
+    return basketCardElement;
   };
 
   window.render = {
     renderCatalogCard: renderCatalogCard,
     renderCatalogCards: renderCatalogCards,
-    renderMoreCards: renderMoreCards
+    renderMoreCards: renderMoreCards,
+    renderBasketCard: renderBasketCard
   };
 })();

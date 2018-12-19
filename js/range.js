@@ -3,13 +3,13 @@
 (function () {
   var KEYCODE = window.util.KEYCODE;
 
-  var rangeElement = document.querySelector('.range');
-  var rangeControlElement = rangeElement.querySelector('.range__filter');
-  var leftPin = rangeElement.querySelector('.range__btn--left');
-  var rightPin = rangeElement.querySelector('.range__btn--right');
-  var rangeFillLine = rangeElement.querySelector('.range__fill-line');
-  var rangeMinValue = rangeElement.querySelector('.range__price--min');
-  var rangeMaxValue = rangeElement.querySelector('.range__price--max');
+  var rangeContainer = document.querySelector('.range');
+  var rangeControlElement = rangeContainer.querySelector('.range__filter');
+  var leftPin = rangeContainer.querySelector('.range__btn--left');
+  var rightPin = rangeContainer.querySelector('.range__btn--right');
+  var rangeFillLine = rangeContainer.querySelector('.range__fill-line');
+  var rangeMinValue = rangeContainer.querySelector('.range__price--min');
+  var rangeMaxValue = rangeContainer.querySelector('.range__price--max');
 
   var rangeControlWidth = rangeControlElement.offsetWidth;
   var pinWidth = rightPin.offsetWidth;

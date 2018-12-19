@@ -197,13 +197,13 @@
               <h3 class="payment__title">Как будешь платить?</h3>
 
               <p class="payment__method toggle-btn">
-                <input type="radio" class="toggle-btn__input visually-hidden" name="pay-method" value="card" id="payment__card" checked>
-                <label for="payment__card" class="toggle-btn__label" tabindex="0">Банковская карта</label>
-                <input type="radio" class="toggle-btn__input visually-hidden" name="pay-method" value="cash" id="payment__cash">
-                <label for="payment__cash" class="toggle-btn__label" tabindex="0">Наличные при получении</label>
+                <input type="radio" class="toggle-btn__input visually-hidden" name="pay-method" value="card" id="payment__card" data-id="0">
+                <label for="payment__card" class="toggle-btn__label" tabindex="0" data-id="0">Банковская карта</label>
+                <input type="radio" class="toggle-btn__input visually-hidden" name="pay-method" value="cash" id="payment__cash" data-id="1">
+                <label for="payment__cash" class="toggle-btn__label" tabindex="0" data-id="1">Наличные при получении</label>
               </p>
 
-              <div class="payment__card-wrap">
+              <div class="payment__card-wrap toggle-btn__container" data-id="0">
                 <div class="payment__inputs">
                   <div class="payment__card-group">
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--card-number">
@@ -242,7 +242,7 @@
                 </div>
               </div>
 
-              <p class="payment__cash-wrap visually-hidden">
+              <p class="payment__cash-wrap toggle-btn__container" data-id="1">
                 <b>Принимаем только рубли.</b> Валюту не предлагать, можем не устоять.
               </p>
             </div>
@@ -252,13 +252,13 @@
             <h3 class="deliver__title">А что с доставкой?</h3>
 
             <p class="deliver__toggle toggle-btn">
-              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="store" id="deliver__store">
-              <label for="deliver__store" class="toggle-btn__label" tabindex="0">Заеду</label>
-              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="courier" id="deliver__courier" checked>
-              <label for="deliver__courier" class="toggle-btn__label" tabindex="0">Хочу курьером</label>
+              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="store" id="deliver__store" data-id="0">
+              <label for="deliver__store" class="toggle-btn__label" tabindex="0" data-id="0">Заеду</label>
+              <input type="radio" class="toggle-btn__input visually-hidden" name="method-deliver" value="courier" id="deliver__courier" data-id="1">
+              <label for="deliver__courier" class="toggle-btn__label" tabindex="0" data-id="1">Хочу курьером</label>
             </p>
 
-            <div class="deliver__store visually-hidden">
+            <div class="deliver__store toggle-btn__container" data-id="0">
               <fieldset class="deliver__stores">
                 <legend class="deliver__store-title">Выберите удобное метро</legend>
 
@@ -322,7 +322,7 @@
               </div>
             </div>
 
-            <div class="deliver__courier">
+            <div class="deliver__courier toggle-btn__container" data-id="1">
               <fieldset class="deliver__entry-fields-wrap">
                 <legend class="deliver__courier-title">Куда завозить?</legend>
 
@@ -491,8 +491,8 @@
   <script src="js/delivery.js"></script>
   <script src="js/render.js"></script>
   <script src="js/range.js"></script>
-  <script src="js/filter.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/basket.js"></script>
+  <script src="js/filter.js"></script>
 </body>
 </html>

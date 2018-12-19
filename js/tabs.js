@@ -1,60 +1,72 @@
 'use strict';
 
 (function () {
-  var isEnterEvent = window.util.isEnterEvent;
+  var KEYCODE = window.util.KEYCODE;
 
-  var orderForm = document.querySelector('.buy form');
+  var CreateTabs = function (containerClassName) {
+    this.container = document.querySelector('.' + containerClassName);
+    this.tabInputs = null;
+    this.tabContainers = null;
+    this.activeTab = null;
 
-  var deliveryCourierContent = orderForm.querySelector('.deliver__courier');
-  var deliveryStoreContent = orderForm.querySelector('.deliver__store');
-  var deliveryCourierInput = orderForm.querySelector('#deliver__courier');
-  var deliveryStoreInput = orderForm.querySelector('#deliver__store');
+    this.container.addEventListener('click', function (evt) {
+      this.toggleTab(evt);
+    }.bind(this));
 
-  var paymentCardContent = orderForm.querySelector('.payment__card-wrap');
-  var paymentCashContent = orderForm.querySelector('.payment__cash-wrap');
-  var paymentCardInput = orderForm.querySelector('#payment__card');
-  var paymentCashInput = orderForm.querySelector('#payment__cash');
+    this.container.addEventListener('keydown', function (evt) {
+      if (evt.which === KEYCODE['ENTER']) {
+        this.toggleTab(evt);
+      }
+    }.bind(this));
+  };
 
-  var toggleTab = function (evt) {
-    var target = evt.target;
+  CreateTabs.prototype.setActiveTab = function (dataId) {
+    this.activeTab = dataId;
+  };
 
-    if (target.tagName.toLowerCase() !== 'label') {
-      return;
-    }
+  CreateTabs.prototype.init = function () {
+    this.reset();
 
-    switch (target.htmlFor) {
-      case 'deliver__courier':
-        deliveryCourierInput.checked = true;
-        deliveryStoreInput.checked = false;
-        deliveryCourierContent.classList.remove('visually-hidden');
-        deliveryStoreContent.classList.add('visually-hidden');
-        break;
-      case 'deliver__store':
-        deliveryStoreInput.checked = true;
-        deliveryCourierInput.checked = false;
-        deliveryStoreContent.classList.remove('visually-hidden');
-        deliveryCourierContent.classList.add('visually-hidden');
-        break;
-      case 'payment__card':
-        paymentCardInput.checked = true;
-        paymentCashInput.checked = false;
-        paymentCardContent.classList.remove('visually-hidden');
-        paymentCashContent.classList.add('visually-hidden');
-        break;
-      case 'payment__cash':
-        paymentCardInput.checked = false;
-        paymentCashInput.checked = true;
-        paymentCashContent.classList.remove('visually-hidden');
-        paymentCardContent.classList.add('visually-hidden');
-        break;
+    this.tabInput = this.container.querySelector('.toggle-btn__input[data-id="' + this.activeTab + '"]');
+    this.tabInput.setAttribute('checked', true);
+    this.tabInput.checked = true;
+
+    this.tabContainer = this.container.querySelector('.toggle-btn__container[data-id="' + this.activeTab + '"]');
+    this.tabContainer.classList.remove('visually-hidden');
+  };
+
+  CreateTabs.prototype.reset = function () {
+    this.tabInputs = this.container.querySelectorAll('.toggle-btn__input');
+    this.tabContainers = this.container.querySelectorAll('.toggle-btn__container');
+
+    for (var i = 0; i < this.tabInputs.length; i++) {
+      this.tabInputs[i].setAttribute('checked', false);
+      this.tabInputs[i].checked = false;
+      this.tabContainers[i].classList.add('visually-hidden');
     }
   };
 
-  orderForm.addEventListener('click', function (evt) {
-    toggleTab(evt);
-  });
+  CreateTabs.prototype.toggleTab = function (evt) {
+    var target = evt.target;
 
-  orderForm.addEventListener('keydown', function (evt) {
-    isEnterEvent(evt, toggleTab);
-  });
+    if (!target.classList.contains('toggle-btn__label')) {
+      return;
+    }
+
+    var id = parseInt(target.dataset.id, 10);
+
+    this.reset();
+
+    this.tabInput = this.container.querySelector('.toggle-btn__input[data-id="' + id + '"]');
+    this.tabInput.setAttribute('checked', true);
+    this.tabInput.checked = true;
+
+    this.tabContainer = this.container.querySelector('.toggle-btn__container[data-id="' + id + '"]');
+    this.tabContainer.classList.remove('visually-hidden');
+  };
+
+  window.tabs = {
+    paymentTabs: new CreateTabs('payment'),
+    deliveryTabs: new CreateTabs('deliver')
+  };
 })();

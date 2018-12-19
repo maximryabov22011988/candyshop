@@ -11,34 +11,6 @@
     'LEFT_MOUSE_BUTTON': 1
   };
 
-  var makeCounter = function () {
-    var currentCount = 0;
-
-    var counter = function () {};
-
-    counter.increment = function () {
-      currentCount++;
-    };
-
-    counter.decrement = function () {
-      currentCount--;
-    };
-
-    counter.get = function () {
-      return currentCount;
-    };
-
-    counter.set = function (value) {
-      currentCount = value;
-    };
-
-    counter.reset = function () {
-      currentCount = 0;
-    };
-
-    return counter;
-  };
-
   var deepCopy = function (object) {
     var clone = Object.create(Object.getPrototypeOf(object));
     var properties = Object.getOwnPropertyNames(object);
@@ -60,6 +32,15 @@
     return Array.prototype.slice.call(pseudoArray);
   };
 
+
+  var showElement = function (node) {
+    node.classList.remove('visually-hidden');
+  };
+
+  var hideElement = function (node) {
+    node.classList.add('visually-hidden');
+  };
+
   var isEnterEvent = function (evt, action) {
     if (evt.which === KEYCODE['ENTER']) {
       action(evt);
@@ -74,9 +55,10 @@
 
   window.util = {
     KEYCODE: KEYCODE,
-    makeCounter: makeCounter,
     deepCopy: deepCopy,
     convertToArray: convertToArray,
+    showElement: showElement,
+    hideElement: hideElement,
     isEnterEvent: isEnterEvent,
     isEscEvent: isEscEvent
   };

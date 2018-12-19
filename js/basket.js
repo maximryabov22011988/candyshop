@@ -4,14 +4,15 @@
   var KEYCODE = window.util.KEYCODE;
   var isEnterEvent = window.util.isEnterEvent;
   var deepCopy = window.util.deepCopy;
+  var showElement = window.util.showElement;
+  var hideElement = window.util.hideElement;
+  var renderBasketCard = window.render.renderBasketCard;
   var blockFields = window.order.blockFields;
 
   var goodsInBasket = {};
 
-  var catalogCardsListElement = document.querySelector('.catalog__cards');
-  var basketCardsListElement = document.querySelector('.goods__cards');
-
-  var basketCardTemplate = document.querySelector('#card-order').content.querySelector('.goods_card');
+  var catalogCardsContainer = document.querySelector('.catalog__cards');
+  var basketCardsContainer = document.querySelector('.goods__cards');
 
   var getCorrectWord = function (number) {
     var word = 'товар';
@@ -29,24 +30,6 @@
     return word;
   };
 
-  var renderBasketCard = function (good, id) {
-    var basketCardElement = basketCardTemplate.cloneNode(true);
-
-    basketCardElement.querySelector('.card-order__title').textContent = good.name;
-    basketCardElement.querySelector('.card-order__img').src = 'img/cards/' + good.picture;
-    basketCardElement.querySelector('.card-order__img').alt = good.name;
-    basketCardElement.querySelector('.card-order__price').textContent = good.price + ' ₽';
-
-    basketCardElement.setAttribute('data-card-id', id);
-    basketCardElement.querySelector('.card-order__close').setAttribute('data-card-id', id);
-    basketCardElement.querySelector('.card-order__price').setAttribute('data-card-id', id);
-    basketCardElement.querySelector('.card-order__count').setAttribute('data-card-id', id);
-    basketCardElement.querySelector('.card-order__btn--decrease').setAttribute('data-card-id', id);
-    basketCardElement.querySelector('.card-order__btn--increase').setAttribute('data-card-id', id);
-
-    return basketCardElement;
-  };
-
   var getGoodAmountInBasket = function () {
     return Object.keys(goodsInBasket).length;
   };
@@ -55,7 +38,7 @@
     var isFound = false;
 
     for (var goodId in goodsInBasket) {
-      if (Number(goodId) === id) {
+      if (parseInt(goodId, 10) === id) {
         isFound = true;
         break;
       }
@@ -66,7 +49,7 @@
 
   var changeDataValue = function (data, id, change, property) {
     for (var key in data) {
-      if (Number(key) === id) {
+      if (parseInt(key, 10) === id) {
         if (change === 'increase') {
           data[key][property] += 1;
           break;
@@ -86,19 +69,19 @@
   };
 
   var getBasketCardElement = function (className, id) {
-    return basketCardsListElement.querySelector('.' + className + '[data-card-id="' + id + '"]');
+    return basketCardsContainer.querySelector('.' + className + '[data-card-id="' + id + '"]');
   };
 
   var getCatalogCardElement = function (className, id) {
-    return catalogCardsListElement.querySelector('.' + className + '[data-card-id="' + id + '"]');
+    return catalogCardsContainer.querySelector('.' + className + '[data-card-id="' + id + '"]');
   };
 
   var addBasketCard = function (good, id) {
-    basketCardsListElement.appendChild(renderBasketCard(good, id));
+    basketCardsContainer.appendChild(renderBasketCard(good, id));
   };
 
   var deleteBasketCard = function (id) {
-    basketCardsListElement.removeChild(getBasketCardElement('card-order', id));
+    basketCardsContainer.removeChild(getBasketCardElement('card-order', id));
     delete goodsInBasket[id];
   };
 
@@ -114,9 +97,9 @@
 
   var isEmptyBasket = function (isEmpty) {
     if (isEmpty) {
-      basketCardsListElement.classList.add('goods__cards--empty');
+      basketCardsContainer.classList.add('goods__cards--empty');
     } else {
-      basketCardsListElement.classList.remove('goods__cards--empty');
+      basketCardsContainer.classList.remove('goods__cards--empty');
     }
   };
 
@@ -139,7 +122,7 @@
 
   var calcTotalBasketInfo = function () {
     var totalBasketInfo = document.querySelector('.goods__total');
-    totalBasketInfo.classList.add('visually-hidden');
+    hideElement(totalBasketInfo);
     var totalPrice = totalBasketInfo.querySelector('.goods__price');
     var totalAmount = totalBasketInfo.querySelector('.goods__total-count');
 
@@ -147,7 +130,7 @@
     totalHeaderBasketInfo.textContent = 'В корзине ничего нет';
 
     if (getGoodAmountInBasket() > 0) {
-      totalBasketInfo.classList.remove('visually-hidden');
+      showElement(totalBasketInfo);
       totalBasketInfo.querySelector('.goods__order-link').classList.remove('goods__order-link--disabled');
 
       var goodOrderedAmount = 0;
@@ -180,7 +163,7 @@
     }
 
     getBasketCardElement('card-order__count', id)
-      .setAttribute('value', Number(getBasketCardElement('card-order__count', id).value) + 1);
+      .setAttribute('value', parseInt(getBasketCardElement('card-order__count', id).value, 10) + 1);
 
     changeDataValue(goodsInBasket, id, 'increase', 'orderedAmount');
     changeDataValue(goodsInBasket, id, 'decrease', 'amount');
@@ -202,7 +185,7 @@
     }
 
     getBasketCardElement('card-order__count', id)
-      .setAttribute('value', Number(getBasketCardElement('card-order__count', id).value) - 1);
+      .setAttribute('value', parseInt(getBasketCardElement('card-order__count', id).value, 10) - 1);
 
     changeDataValue(goodsInBasket, id, 'decrease', 'orderedAmount');
     changeDataValue(goodsInBasket, id, 'increase', 'amount');
@@ -217,7 +200,7 @@
   var addGoodToBasket = function (evt) {
     var target = evt.target;
     var classNames = target.classList;
-    var id = Number(target.dataset.cardId);
+    var id = parseInt(target.dataset.cardId, 10);
 
     if (!classNames.contains('card__btn')) {
       return;
@@ -256,7 +239,7 @@
   var manageGoodOrderedAmountInBasket = function (evt) {
     var target = evt.target;
     var classNames = target.classList;
-    var id = Number(target.dataset.cardId);
+    var id = parseInt(target.dataset.cardId, 10);
 
     evt.preventDefault();
 
@@ -281,23 +264,23 @@
     }
   };
 
-  catalogCardsListElement.addEventListener('click', function (evt) {
+  catalogCardsContainer.addEventListener('click', function (evt) {
     addGoodToBasket(evt);
   });
 
-  catalogCardsListElement.addEventListener('keydown', function (evt) {
+  catalogCardsContainer.addEventListener('keydown', function (evt) {
     isEnterEvent(evt, addGoodToBasket);
   });
 
-  basketCardsListElement.addEventListener('click', function (evt) {
+  basketCardsContainer.addEventListener('click', function (evt) {
     manageGoodOrderedAmountInBasket(evt);
   });
 
-  basketCardsListElement.addEventListener('keydown', function (evt) {
+  basketCardsContainer.addEventListener('keydown', function (evt) {
     isEnterEvent(evt, manageGoodOrderedAmountInBasket);
   });
 
-  basketCardsListElement.addEventListener('keydown', function (evt) {
+  basketCardsContainer.addEventListener('keydown', function (evt) {
     var target = evt.target;
     var classNames = target.classList;
 
@@ -311,21 +294,21 @@
     evt.preventDefault();
   });
 
-  basketCardsListElement.addEventListener('input', function (evt) {
+  basketCardsContainer.addEventListener('input', function (evt) {
     var target = evt.target;
     var classNames = target.classList;
-    var id = Number(target.dataset.cardId);
+    var id = parseInt(target.dataset.cardId, 10);
 
     if (!classNames.contains('card-order__count')) {
       return;
     }
 
-    if (Number(getBasketCardElement('card-order__count', id).value) > window.goodsInCatalog[id]['amount']) {
+    if (parseInt(getBasketCardElement('card-order__count', id).value, 10) > window.goodsInCatalog[id]['amount']) {
       blockAddGoodButtonInBasket(id, true);
       getBasketCardElement('card-order__count', id).setAttribute('value', window.goodsInCatalog[id]['amount']);
       getBasketCardElement('card-order__count', id).value = window.goodsInCatalog[id]['amount'];
       goodsInBasket[id]['orderedAmount'] = window.goodsInCatalog[id]['amount'];
-    } else if (Number(getBasketCardElement('card-order__count', id).value) < 0) {
+    } else if (parseInt(getBasketCardElement('card-order__count', id).value, 10) < 0) {
       getBasketCardElement('card-order__count', id).setAttribute('value', 0);
       getBasketCardElement('card-order__count', id).value = 0;
       goodsInBasket[id]['orderedAmount'] = 0;
@@ -333,7 +316,7 @@
       if (getCatalogCardElement('card__btn', id).classList.contains('card__btn--disabled')) {
         blockAddGoodButtonInBasket(id, false);
       }
-      goodsInBasket[id]['orderedAmount'] = Number(getBasketCardElement('card-order__count', id).value);
+      goodsInBasket[id]['orderedAmount'] = parseInt(getBasketCardElement('card-order__count', id).value, 10);
     }
 
     goodsInBasket[id]['amount'] = window.goodsInCatalog[id]['amount'] - goodsInBasket[id]['orderedAmount'];

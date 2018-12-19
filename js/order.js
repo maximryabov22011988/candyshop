@@ -10,6 +10,9 @@
 
   var orderForm = document.querySelector('.buy__form');
   var orderFields = convertToArray(orderForm.querySelectorAll('input'));
+  var contactFields = convertToArray(orderForm.querySelectorAll('.contact-data__inputs input'));
+  var bankCardFields = convertToArray(orderForm.querySelectorAll('.payment__inputs input'));
+  var courierFields = convertToArray(orderForm.querySelectorAll('.deliver__address-entry-fields input'));
   var paymentMessage = orderForm.querySelector('.payment__card-status');
 
   var blockFields = function (boolean) {
@@ -17,6 +20,54 @@
       field.disabled = boolean;
     });
   };
+
+  var resetFields = function (containerClassName) {
+    var fields = convertToArray(orderForm.querySelectorAll('.' + containerClassName + ' input'));
+    fields.forEach(function (field) {
+      field.setAttribute('checked', false);
+      field.checked = false;
+    });
+  };
+
+  var disableFields = function (containerClassName) {
+    window.util.convertToArray(orderForm.querySelectorAll('.' + containerClassName + ' input')).forEach(function (field) {
+      field.disabled = true;
+    });
+  };
+
+  var enableFields = function (containerClassName) {
+    window.util.convertToArray(orderForm.querySelectorAll('.' + containerClassName + ' input')).forEach(function (field) {
+      field.disabled = false;
+    });
+  };
+
+  var checkFields = function (evt, fields) {
+    var validityFields = [];
+
+    fields.forEach(function (field) {
+      if (field.required === true) {
+        var isValidField = validateField(evt, customValidation, field);
+
+        if (isValidField) {
+          var isVerifyField = verifyField(evt, customValidation, field);
+          if (!isVerifyField) {
+            field.focus();
+          }
+        }
+
+        if (field.checkValidity() === true) {
+          validityFields.push(true);
+        } else {
+          validityFields.push(false);
+        }
+      }
+    });
+
+    return validityFields.every(function (isValidField) {
+      return isValidField === true;
+    });
+  };
+
 
   var successHandler = function (response, evt) {
     showSuccessModal();
@@ -43,31 +94,49 @@
     evt.preventDefault();
     blockFields(false);
 
-    var stopSubmit = false;
+    var cardPaymentInput = orderForm.querySelector('#payment__card');
+    var courierDeliveryInput = orderForm.querySelector('#deliver__courier');
+    var isCorrectContactFields = checkFields(evt, contactFields);
+    var isCorrectBankCard = null;
+    var isCorrectCourierFields = null;
 
-    orderFields.forEach(function (field) {
-      if (field.required === true) {
-        var isValidField = validateField(evt, customValidation, field);
-
-        if (isValidField) {
-          var isVerifyField = verifyField(evt, customValidation, field);
-          if (!isVerifyField) {
-            field.focus();
-          }
-        }
-
-        if (field.checkValidity() === false) {
-          stopSubmit = true;
-        }
+    if (cardPaymentInput.checked === true && courierDeliveryInput.checked === true) {
+      resetFields('deliver__store-list');
+      checkFields(evt, bankCardFields);
+      isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
+      isCorrectCourierFields = checkFields(evt, courierFields);
+      if (isCorrectContactFields && isCorrectBankCard && isCorrectCourierFields) {
+        backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
       }
-    });
+      return;
+    }
 
-    var isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
+    if (cardPaymentInput.checked === true) {
+      checkFields(evt, bankCardFields);
+      isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
+      if (isCorrectContactFields && isCorrectBankCard) {
+        backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
+      }
+      return;
+    }
 
-    if (!stopSubmit && isCorrectBankCard) {
+    if (courierDeliveryInput.checked === true) {
+      resetFields('deliver__store-list');
+      isCorrectCourierFields = checkFields(evt, courierFields);
+      if (isCorrectContactFields && isCorrectCourierFields) {
+        backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
+      }
+      return;
+    }
+
+    if (isCorrectContactFields) {
       backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
     }
   });
 
-  window.order.blockFields = blockFields;
+  window.order = {
+    blockFields: blockFields,
+    disableFields: disableFields,
+    enableFields: enableFields
+  };
 })();

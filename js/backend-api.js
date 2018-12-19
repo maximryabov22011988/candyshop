@@ -9,12 +9,11 @@
     POST: 'https://js.dump.academy/candyshop'
   };
 
-  var createRequest = function () {
+  var CreateRequest = function () {
     var httpRequest = false;
 
     if (window.XMLHttpRequest) {
       httpRequest = new XMLHttpRequest();
-
       if (httpRequest.overrideMimeType) {
         httpRequest.overrideMimeType('text/xml');
       }
@@ -34,7 +33,7 @@
   };
 
   var createXhr = function (onLoad, onError, isGet) {
-    var xhr = createRequest();
+    var xhr = CreateRequest();
     xhr.responseType = 'json';
 
     if (isGet) {

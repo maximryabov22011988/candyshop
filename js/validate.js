@@ -6,7 +6,7 @@
   };
 
   var isCorrectNumber = function (number) {
-    return (Number(number) !== 0) ? true : false;
+    return (parseInt(number, 10) !== 0) ? true : false;
   };
 
   var customValidation = {
@@ -62,7 +62,7 @@
         }
 
         numbers.forEach(function (number, i) {
-          number = Number(number);
+          number = parseInt(number, 10);
 
           if (i % 2 === 0) {
             number *= 2;
@@ -91,16 +91,16 @@
       },
       checkValue: function (cardDate) {
         var dates = cardDate.split('/');
-        var month = Number(dates[0]);
-        var year = Number(dates[1]);
-        var currentYear = Number(String(new Date().getFullYear()).slice(2));
+        var month = parseInt(dates[0], 10);
+        var year = parseInt(dates[1], 10);
+        var currentYear = parseInt(String(new Date().getFullYear()).slice(2), 10);
         return (month >= 1 && month <= 12 && year >= currentYear) ? true : false;
       },
       formatValue: function (input) {
         if (input.name === 'card-date') {
           var date = input.value.replace(/[^\d]/g, '').substring(0, 5);
-          var month = Number(date.substring(0, 2));
-          var year = Number(date.slice(2));
+          var month = parseInt(date.substring(0, 2), 10);
+          var year = parseInt(date.slice(2), 10);
           input.value = (date !== '') ? date.match(/.{1,2}/g).join('\/') : '';
 
           if (month > 12 && year) {
