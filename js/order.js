@@ -8,131 +8,163 @@
   var verifyField = window.validate.verifyField;
   var showSuccessModal = window.modal.showSuccessModal;
 
-  var orderForm = document.querySelector('.buy__form');
-  var orderFields = convertToArray(orderForm.querySelectorAll('input'));
-  var contactFields = convertToArray(orderForm.querySelectorAll('.contact-data__inputs input'));
-  var bankCardFields = convertToArray(orderForm.querySelectorAll('.payment__inputs input'));
-  var courierFields = convertToArray(orderForm.querySelectorAll('.deliver__address-entry-fields input'));
-  var paymentMessage = orderForm.querySelector('.payment__card-status');
 
+  var orderFormElement = document.querySelector('.buy__form');
+  var orderFieldsElements = convertToArray(orderFormElement.querySelectorAll('input'));
+  var contactFieldsElements = convertToArray(orderFormElement.querySelectorAll('.contact-data__inputs input'));
+  var bankCardFieldsElements = convertToArray(orderFormElement.querySelectorAll('.payment__inputs input'));
+  var courierFieldsElements = convertToArray(orderFormElement.querySelectorAll('.deliver__address-entry-fields input'));
+  var paymentMessageElement = orderFormElement.querySelector('.payment__card-status');
+
+  /**
+   * Блокирует / разблокирует все поля формы заказа.
+   *
+   * @param  {boolean} boolean - true / false
+   */
   var blockFields = function (boolean) {
-    orderFields.forEach(function (field) {
-      field.disabled = boolean;
+    orderFieldsElements.forEach(function (fieldElement) {
+      fieldElement.disabled = boolean;
     });
   };
 
+  /**
+   * Сбрасывает атрибут "checked" у полей внутри контейнера.
+   *
+   * @param  {string} containerClassName - css-класс контейнера
+   */
   var resetFields = function (containerClassName) {
-    var fields = convertToArray(orderForm.querySelectorAll('.' + containerClassName + ' input'));
-    fields.forEach(function (field) {
-      field.setAttribute('checked', false);
-      field.checked = false;
+    var fieldsElements = convertToArray(orderFormElement.querySelectorAll('.' + containerClassName + ' input'));
+    fieldsElements.forEach(function (fieldElement) {
+      fieldElement.setAttribute('checked', false);
+      fieldElement.checked = false;
     });
   };
 
+  /**
+   * Добавляет атрибут "disable" у полей внутри контейнера.
+   *
+   * @param  {[type]} containerClassName - css-класс контейнера
+   */
   var disableFields = function (containerClassName) {
-    window.util.convertToArray(orderForm.querySelectorAll('.' + containerClassName + ' input')).forEach(function (field) {
-      field.disabled = true;
+    var fieldsElements = convertToArray(orderFormElement.querySelectorAll('.' + containerClassName + ' input'));
+    fieldsElements.forEach(function (fieldElement) {
+      fieldElement.disabled = true;
     });
   };
 
+  /**
+   * Сбрасывает атрибут "disable" у полей внутри контейнера.
+   *
+   * @param  {[type]} containerClassName - css-класс контейнера
+   */
   var enableFields = function (containerClassName) {
-    window.util.convertToArray(orderForm.querySelectorAll('.' + containerClassName + ' input')).forEach(function (field) {
-      field.disabled = false;
+    var fieldsElements = convertToArray(orderFormElement.querySelectorAll('.' + containerClassName + ' input'));
+    fieldsElements.forEach(function (fieldElement) {
+      fieldElement.disabled = false;
     });
   };
 
-  var checkFields = function (evt, fields) {
+  /**
+   * Валидирует и верифицирует поля формы (валидация - проверяет корректность заполнения; верификация - проверяет корректность значения).
+   *
+   * @param  {object} evt         - объект event
+   * @param  {DOM} fieldsElements - поле для проверки
+   * @return {boolean}            - все поля корректны (true / false)
+   */
+  var checkFields = function (evt, fieldsElements) {
     var validityFields = [];
-
-    fields.forEach(function (field) {
-      if (field.required === true) {
-        var isValidField = validateField(evt, customValidation, field);
-
-        if (isValidField) {
-          var isVerifyField = verifyField(evt, customValidation, field);
-          if (!isVerifyField) {
-            field.focus();
+    fieldsElements.forEach(function (fieldElement) {
+      if (fieldElement.required === true) {
+        if (validateField(evt, customValidation, fieldElement)) {
+          if (!verifyField(evt, customValidation, fieldElement)) {
+            fieldElement.focus();
           }
         }
-
-        if (field.checkValidity() === true) {
+        if (fieldElement.checkValidity() === true) {
           validityFields.push(true);
         } else {
           validityFields.push(false);
         }
       }
     });
-
-    return validityFields.every(function (isValidField) {
-      return isValidField === true;
+    return validityFields.every(function (value) {
+      return value === true;
     });
   };
 
-
+  /**
+   * Обработчик при успешной отправке данных формы.
+   *
+   * @param  {object} response - xhr-запрос
+   * @param  {object} evt      - объект event
+   */
   var successHandler = function (response, evt) {
     showSuccessModal();
-
-    orderFields.forEach(function (field) {
-      var fieldContainer = field.parentElement;
-      field.value = '';
-
-      if (fieldContainer.classList.contains('text-input')) {
-        fieldContainer.classList.remove('text-input--error');
-        fieldContainer.classList.remove('text-input--correct');
+    orderFieldsElements.forEach(function (fieldElement) {
+      var fieldContainerElement = fieldElement.parentElement;
+      fieldElement.value = '';
+      if (fieldContainerElement.classList.contains('text-input')) {
+        fieldContainerElement.classList.remove('text-input--error');
+        fieldContainerElement.classList.remove('text-input--correct');
       }
     });
-
-    paymentMessage.textContent = 'Не определён';
-    paymentMessage.style.color = '';
+    paymentMessageElement.textContent = 'Не определён';
+    paymentMessageElement.style.color = '';
   };
 
+  /**
+   * Обработчик при неудачной отправке данных формы
+   *
+   * @param  {string} errorMessage - текст ошибки
+   */
   var errorHandler = function (errorMessage) {
     throw new Error(errorMessage);
   };
 
-  orderForm.addEventListener('submit', function (evt) {
+  orderFormElement.addEventListener('submit', function (evt) {
     evt.preventDefault();
     blockFields(false);
 
-    var cardPaymentInput = orderForm.querySelector('#payment__card');
-    var courierDeliveryInput = orderForm.querySelector('#deliver__courier');
-    var isCorrectContactFields = checkFields(evt, contactFields);
+    var cardPaymentInputElement = orderFormElement.querySelector('#payment__card');
+    var courierDeliveryInputElement = orderFormElement.querySelector('#deliver__courier');
+    var isCorrectContactFields = checkFields(evt, contactFieldsElements);
     var isCorrectBankCard = null;
     var isCorrectCourierFields = null;
 
-    if (cardPaymentInput.checked === true && courierDeliveryInput.checked === true) {
+    if (cardPaymentInputElement.checked === true && courierDeliveryInputElement.checked === true) {
       resetFields('deliver__store-list');
-      checkFields(evt, bankCardFields);
-      isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
-      isCorrectCourierFields = checkFields(evt, courierFields);
+      checkFields(evt, bankCardFieldsElements);
+      isCorrectBankCard = paymentMessageElement.textContent.toLowerCase() === 'одобрен';
+      isCorrectCourierFields = checkFields(evt, courierFieldsElements);
       if (isCorrectContactFields && isCorrectBankCard && isCorrectCourierFields) {
-        backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
+        backendApi.sendData(new FormData(orderFormElement), successHandler, errorHandler);
       }
       return;
     }
 
-    if (cardPaymentInput.checked === true) {
-      checkFields(evt, bankCardFields);
-      isCorrectBankCard = paymentMessage.textContent.toLowerCase() === 'одобрен';
+    if (cardPaymentInputElement.checked === true) {
+      checkFields(evt, bankCardFieldsElements);
+      isCorrectBankCard = paymentMessageElement.textContent.toLowerCase() === 'одобрен';
       if (isCorrectContactFields && isCorrectBankCard) {
-        backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
+        backendApi.sendData(new FormData(orderFormElement), successHandler, errorHandler);
       }
       return;
     }
 
-    if (courierDeliveryInput.checked === true) {
+    if (courierDeliveryInputElement.checked === true) {
       resetFields('deliver__store-list');
-      isCorrectCourierFields = checkFields(evt, courierFields);
+      isCorrectCourierFields = checkFields(evt, courierFieldsElements);
       if (isCorrectContactFields && isCorrectCourierFields) {
-        backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
+        backendApi.sendData(new FormData(orderFormElement), successHandler, errorHandler);
       }
       return;
     }
 
     if (isCorrectContactFields) {
-      backendApi.sendData(new FormData(orderForm), successHandler, errorHandler);
+      backendApi.sendData(new FormData(orderFormElement), successHandler, errorHandler);
     }
   });
+
 
   window.order = {
     blockFields: blockFields,

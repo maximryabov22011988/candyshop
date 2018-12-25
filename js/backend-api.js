@@ -4,12 +4,22 @@
   var showErrorModal = window.modal.showErrorModal;
   var renderCatalogLoader = window.loader.renderCatalogLoader;
 
+
   var URL = {
     GET: 'https://js.dump.academy/candyshop/data',
     POST: 'https://js.dump.academy/candyshop'
   };
 
-  var CreateRequest = function () {
+  var catalogCardsContainerElement = document.querySelector('.catalog__cards');
+  var catalogLoaderElement = document.querySelector('.catalog__load');
+
+
+  /**
+   * Создает httpRequest.
+   *
+   * @return {object} - httpRequest
+   */
+  var createRequest = function () {
     var httpRequest = false;
 
     if (window.XMLHttpRequest) {
@@ -32,21 +42,26 @@
     return httpRequest;
   };
 
+  /**
+   * Настраивает xhr-объект.
+   *
+   * @param  {function} onLoad  - колбэк при успешном запросе
+   * @param  {function} onError - колбэк при ошибке в запросе
+   * @param  {boolean}  isGet   - флаг для GET-запроса
+   * @return {object}           - настроенный xhr-объект
+   */
   var createXhr = function (onLoad, onError, isGet) {
-    var xhr = CreateRequest();
+    var xhr = createRequest();
     xhr.responseType = 'json';
 
-    if (isGet) {
-      if (!document.querySelector('.catalog__load')) {
-        renderCatalogLoader();
-      } else {
-        document.querySelector('.catalog__cards').classList.add('catalog__cards--load');
-      }
+    if (isGet && !catalogLoaderElement) {
+      renderCatalogLoader();
+    } else if (isGet && catalogLoaderElement) {
+      catalogCardsContainerElement.classList.add('catalog__cards--load');
     }
 
     xhr.addEventListener('load', function () {
       var errorMessage;
-
       switch (xhr.status) {
         case 200:
           onLoad(xhr.response);
@@ -84,14 +99,11 @@
       onError(message);
     });
 
-    if (isGet) {
-      xhr.timeout = 15000;
-    } else {
-      xhr.timeout = 60000;
-    }
+    xhr.timeout = isGet ? 15000 : 60000;
 
     return xhr;
   };
+
 
   window.backendApi = {
     loadData: function (onLoad, onError) {

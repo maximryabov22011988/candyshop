@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var hideElement = window.util.hideElement;
+
+
   var valueToClassName = {
     1: 'one',
     2: 'two',
@@ -11,25 +14,32 @@
 
   var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
   var basketCardTemplate = document.querySelector('#card-order').content.querySelector('.goods_card');
+  var catalogCardsContainerElement = document.querySelector('.catalog__cards');
+  var showMoreButtonElement = document.querySelector('.catalog__btn-more');
 
-  var catalogCardsContainer = document.querySelector('.catalog__cards');
-  var showMoreGoodsButton = document.querySelector('.catalog__btn-more');
-
+  /**
+   * Возвращает соответствующий css-класс.
+   *
+   * @param  {number} value - значение рейтинга
+   * @return {string}       - соответствующий css-класс
+   */
   var getRatingClassName = function (value) {
     return 'stars__rating--' + valueToClassName[value];
   };
 
+  /**
+   * Рендерит карточку товара.
+   *
+   * @param  {object} good      - описание товара
+   * @param  {number} id        - id товара
+   * @param  {string} className - соответствующий класс
+   * @return {DOM}              - карточка товара
+   */
   var renderCatalogCard = function (good, id, className) {
     var catalogCardElement = catalogCardTemplate.cloneNode(true);
 
     catalogCardElement.classList.remove('card--in-stock');
     catalogCardElement.classList.add(className);
-
-    catalogCardElement.setAttribute('data-good-kind', good.kind);
-    catalogCardElement.setAttribute('data-good-sugar', good.nutritionFacts.sugar);
-    catalogCardElement.setAttribute('data-good-vegetarian', good.nutritionFacts.vegetarian);
-    catalogCardElement.setAttribute('data-good-gluten', good.nutritionFacts.gluten);
-
     catalogCardElement.querySelector('.card__title').textContent = good.name;
     catalogCardElement.querySelector('.card__img').src = 'img/cards/' + good.picture;
     catalogCardElement.querySelector('.card__img').alt = good.name;
@@ -44,7 +54,9 @@
 
     if (good.favorite === true) {
       catalogCardElement.querySelector('.card__btn-favorite').classList.add('card__btn-favorite--selected');
-    } else if (good.favorite === false) {
+    }
+
+    if (good.favorite === false) {
       catalogCardElement.querySelector('.card__btn-favorite').classList.remove('card__btn-favorite--selected');
     }
 
@@ -55,55 +67,43 @@
     return catalogCardElement;
   };
 
+  /**
+   * Добавляет карточки товара в DOM.
+   *
+   * @param  {array} goods   - массив товаров
+   * @param  {number} amount - количество товара для отображения
+   */
   var renderCatalogCards = function (goods, amount) {
     amount = amount || 6;
 
     var fragment = document.createDocumentFragment();
-
     for (var i = 0; i < amount; i++) {
       var goodClass = 'card--soon';
-
       if (goods.length > 5) {
         goodClass = 'card--in-stock';
       } else if (goods.length >= 1 && goods.length <= 5) {
         goodClass = 'card--little';
       }
-
       fragment.appendChild(renderCatalogCard(goods[i], i, goodClass));
     }
 
-    catalogCardsContainer.insertBefore(fragment, showMoreGoodsButton);
-  };
+    if (goods.length <= 6 || goods.length === amount) {
+      hideElement(showMoreButtonElement);
+      catalogCardsContainerElement.appendChild(fragment);
+    }
 
-  var startIndex = 0;
-
-  var renderMoreCards = function (goods) {
-    var fragment = document.createDocumentFragment();
-    var goodClass;
-
-    if (goods.length >= 6) {
-      for (var i = startIndex; i < startIndex + 6; i++) {
-        goodClass = 'card--soon';
-
-        if (goods.length > 5) {
-          goodClass = 'card--in-stock';
-        } else if (goods.length >= 1 && goods.length <= 5) {
-          goodClass = 'card--little';
-        }
-
-        fragment.appendChild(renderCatalogCard(goods[i], i, goodClass));
-      }
-
-      startIndex += 6;
-
-      if (startIndex >= goods.length) {
-        startIndex = 0;
-      }
-
-      catalogCardsContainer.insertBefore(fragment, showMoreGoodsButton);
+    if (amount === 6) {
+      catalogCardsContainerElement.insertBefore(fragment, showMoreButtonElement);
     }
   };
 
+  /**
+   * Рендерит карточку товара в корзине.
+   *
+   * @param  {object} good - описание товара
+   * @param  {number} id   - id товара
+   * @return {DOM}         - карточка товара
+   */
   var renderBasketCard = function (good, id) {
     var basketCardElement = basketCardTemplate.cloneNode(true);
 
@@ -111,7 +111,6 @@
     basketCardElement.querySelector('.card-order__img').src = 'img/cards/' + good.picture;
     basketCardElement.querySelector('.card-order__img').alt = good.name;
     basketCardElement.querySelector('.card-order__price').textContent = good.price + ' ₽';
-
     basketCardElement.setAttribute('data-card-id', id);
     basketCardElement.querySelector('.card-order__close').setAttribute('data-card-id', id);
     basketCardElement.querySelector('.card-order__price').setAttribute('data-card-id', id);
@@ -122,10 +121,10 @@
     return basketCardElement;
   };
 
+
   window.render = {
     renderCatalogCard: renderCatalogCard,
     renderCatalogCards: renderCatalogCards,
-    renderMoreCards: renderMoreCards,
     renderBasketCard: renderBasketCard
   };
 })();

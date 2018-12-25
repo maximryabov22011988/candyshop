@@ -7,50 +7,49 @@
   var verifyField = window.validate.verifyField;
   var enableFields = window.order.enableFields;
   var disableFields = window.order.disableFields;
-
   var paymentTabs = window.tabs.paymentTabs;
+
+
+  var cardTabElement = document.querySelector('.toggle-btn__label[for="payment__card"]');
+  var cashTabElement = document.querySelector('.toggle-btn__label[for="payment__cash"]');
+  var fieldsContainerElement = document.querySelector('.payment__inputs');
+
   paymentTabs.setActiveTab(0);
   paymentTabs.init();
 
-  var cardTab = document.querySelector('.toggle-btn__label[for="payment__card"]');
-  var cashTab = document.querySelector('.toggle-btn__label[for="payment__cash"]');
-  var fieldsContainer = document.querySelector('.payment__inputs');
-
-  cardTab.addEventListener('click', function () {
+  cardTabElement.addEventListener('click', function () {
     enableFields('payment__inputs');
   });
 
-  cashTab.addEventListener('click', function () {
+  cashTabElement.addEventListener('click', function () {
     disableFields('payment__inputs');
   });
 
-  fieldsContainer.addEventListener('input', function (evt) {
+  fieldsContainerElement.addEventListener('input', function (evt) {
     validateField(evt, customValidation);
-
     if (evt.target.checkValidity() === true) {
       verifyField(evt, customValidation);
     }
   });
 
-  fieldsContainer.addEventListener('blur', function () {
-    var fields = convertToArray(fieldsContainer.querySelectorAll('.text-input__input'));
-    var statusMessage = fieldsContainer.querySelector('.payment__card-status');
-
+  fieldsContainerElement.addEventListener('blur', function () {
     var totalVerification = [];
+    var fieldsElements = convertToArray(fieldsContainerElement.querySelectorAll('.text-input__input'));
+    var statusMessageElement = fieldsContainerElement.querySelector('.payment__card-status');
 
-    fields.forEach(function (field, i) {
+    fieldsElements.forEach(function (field, i) {
       totalVerification[i] = customValidation[field.name].checkValue(field.value);
     });
 
-    var isVerify = totalVerification.every(function (verifyValue) {
-      return verifyValue === true;
+    var isVerify = totalVerification.every(function (value) {
+      return value === true;
     });
 
     if (isVerify) {
-      statusMessage.textContent = 'Одобрен';
-      statusMessage.style.color = '#6e58d9';
+      statusMessageElement.textContent = 'Одобрен';
+      statusMessageElement.style.color = '#6e58d9';
     } else {
-      statusMessage.textContent = 'Не определён';
+      statusMessageElement.textContent = 'Не определён';
     }
   }, true);
 })();
