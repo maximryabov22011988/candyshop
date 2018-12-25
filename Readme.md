@@ -1,6 +1,6 @@
-# Личный проект «Кэндишоп» [![Build status][travis-image]][travis-url]
+# Личный проект «Кэндишоп»
 
-Candyshop - Новый проект от [htmlAcademy](https://htmlacademy.ru/intensive/javascript)
+<a href="https://maximryabov22011988.github.io/portfolio/candyshop/index.html" target="_blank">Candyshop</a> - Новый проект от [htmlAcademy]
 
 _Основы JS, Валидация, шаблонизация, обработчики событий, работа с сетью, дебаунс_
 
