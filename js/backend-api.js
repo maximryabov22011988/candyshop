@@ -6,8 +6,8 @@
 
 
   var URL = {
-    GET: 'https://js.dump.academy/candyshop/data',
-    POST: 'https://js.dump.academy/candyshop'
+    GET: 'https://javascript.pages.academy/candyshop/data',
+    POST: 'https://javascript.pages.academy/candyshop/'
   };
 
   var catalogCardsContainerElement = document.querySelector('.catalog__cards');
