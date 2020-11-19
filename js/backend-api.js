@@ -7,7 +7,7 @@
 
   var URL = {
     GET: 'https://javascript.pages.academy/candyshop/data',
-    POST: 'https://javascript.pages.academy/candyshop/'
+    POST: 'https://javascript.pages.academy/candyshop'
   };
 
   var catalogCardsContainerElement = document.querySelector('.catalog__cards');
